@@ -116,7 +116,16 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
         if (source == null)
             createSource();
 
+       /* Random r = new Random();
+
+        for (int i = 0; i < samples.length; i++) {
+                samples[i] = (short) r.nextInt(Short.MAX_VALUE);
+        }*/
+
         byte[] b = toByteArray(samples, offs, len);
+
+
+
         source.write(b, 0, len * 2);
     }
 

@@ -258,27 +258,7 @@ public final class Header {
             crcp[0] = crc;
         } else
             crcp[0] = null;
-        if (h_sample_frequency == FOURTYFOUR_POINT_ONE) {
-			/*
-				if (offset == null)
-			  {
-				  int max = max_number_of_frames(stream);
-				  offset = new int[max];
-			     for(int i=0; i<max; i++) offset[i] = 0;
-			  }
-			  // E.B : Investigate more
-			  int cf = stream.current_frame();
-			  int lf = stream.last_frame();
-			  if ((cf > 0) && (cf == lf))
-			  {
-				   offset[cf] = offset[cf-1] + h_padding_bit;
-			  }
-			  else
-			  {
-				       offset[0] = h_padding_bit;
-			  }
-			*/
-        }
+
     }
 
     /**
@@ -293,6 +273,7 @@ public final class Header {
         byte[] tmp = new byte[4];
         int offset = 0;
         // Compute "Xing" offset depending on MPEG version and channels.
+
         if (h_version == MPEG1) {
             if (h_mode == SINGLE_CHANNEL) offset = 21 - 4;
             else offset = 36 - 4;

@@ -22,6 +22,7 @@ package javazoom.jl.player;
 
 import javazoom.jl.decoder.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -196,23 +197,7 @@ public class Player {
         } catch (RuntimeException ex) {
             throw new JavaLayerException("Exception decoding audio frame", ex);
         }
-/*
-		catch (IOException ex)
-		{
-			System.out.println("exception decoding audio frame: "+ex);
-			return false;	
-		}
-		catch (BitstreamException bitex)
-		{
-			System.out.println("exception decoding audio frame: "+bitex);
-			return false;	
-		}
-		catch (DecoderException decex)
-		{
-			System.out.println("exception decoding audio frame: "+decex);
-			return false;				
-		}
-*/
+
         return true;
     }
 
