@@ -239,6 +239,35 @@ final class LayerIIIDecoder implements FrameDecoder {
     // MDM: new_slen is fully initialized before use, no need
     // to reallocate array.
     private final int[] new_slen = new int[4];
+    private final int[] is_1d;
+    private final float[][][] ro;
+    private final float[][][] lr;
+    private final float[] out_1d;
+    private final float[][] prevblck;
+    private final float[][] k;
+    private final int[] nonzero;
+    private final Bitstream stream;
+    private final Header header;
+    private final SynthesisFilter filter1;
+    private final SynthesisFilter filter2;
+    private final Obuffer buffer;
+    private final int which_channels;
+    private final III_side_info_t si;
+    private final temporaire2[] scalefac;
+    private final int max_gr;
+    private final int channels;
+    private final int first_channel;
+    private final int last_channel;
+    private final int sfreq;
+    /**
+     * Decode one frame, filling the buffer with the output samples.
+     */
+
+    // subband samples are buffered and passed to the
+    // SynthesisFilter in one go.
+    private final float[] samples1 = new float[32];
+    private final float[] samples2 = new float[32];
+    private final SBI[] sfBandIndex; // Init in the constructor.
     public int[] scalefac_buffer;
     public Sftable sftable;
     /**
@@ -266,38 +295,9 @@ final class LayerIIIDecoder implements FrameDecoder {
     // MDM: removed, as this wasn't being used.
     //private float               CheckSumOut1d = 0.0f;
     private int CheckSumHuff = 0;
-    private final int[] is_1d;
-    private final float[][][] ro;
-    private final float[][][] lr;
-    private final float[] out_1d;
-    private final float[][] prevblck;
-    private final float[][] k;
-    private final int[] nonzero;
-    private final Bitstream stream;
-    private final Header header;
-    private final SynthesisFilter filter1;
-    private final SynthesisFilter filter2;
-    private final Obuffer buffer;
-    private final int which_channels;
     private BitReserve br;
-    private final III_side_info_t si;
-    private final temporaire2[] scalefac;
-    private final int max_gr;
     private int frame_start;
     private int part2_start;
-    private final int channels;
-    private final int first_channel;
-    private final int last_channel;
-    private final int sfreq;
-    /**
-     * Decode one frame, filling the buffer with the output samples.
-     */
-
-    // subband samples are buffered and passed to the
-    // SynthesisFilter in one go.
-    private final float[] samples1 = new float[32];
-    private final float[] samples2 = new float[32];
-    private final SBI[] sfBandIndex; // Init in the constructor.
 
     /**
      * Constructor.
@@ -467,7 +467,6 @@ final class LayerIIIDecoder implements FrameDecoder {
 
     /************************************************************/
     /*                            L3TABLE                       */
-
     public void decodeFrame() {
         decode();
     }
@@ -2322,6 +2321,7 @@ final class LayerIIIDecoder implements FrameDecoder {
             gr[1] = new gr_info_s();
         }
     }
+
     /***************************************************************/
     /*                         END OF INV_MDCT                     */
 

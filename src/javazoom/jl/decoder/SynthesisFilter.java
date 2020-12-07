@@ -63,28 +63,28 @@ final class SynthesisFilter {
 	*/
     private static final float cos15_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 15.0 / 64.0)));
     private static final float cos17_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 17.0 / 64.0)));
-  
-	/*
-	private void setQuality(int quality0)
-	{
-	  	switch (quality0)
-	  	{		
-		case HIGH_QUALITY:
-		case MEDIUM_QUALITY:
-		case LOW_QUALITY:						  
-			v_inc = 16 * quality0;			
-			quality = quality0;
-			break;	
-		default :
-			throw new IllegalArgumentException("Unknown quality value");
-	  	}				
-	}
-	
-	public int getQuality()
-	{
-		return quality;	
-	}
-	*/
+
+    /*
+    private void setQuality(int quality0)
+    {
+          switch (quality0)
+          {
+        case HIGH_QUALITY:
+        case MEDIUM_QUALITY:
+        case LOW_QUALITY:
+            v_inc = 16 * quality0;
+            quality = quality0;
+            break;
+        default :
+            throw new IllegalArgumentException("Unknown quality value");
+          }
+    }
+
+    public int getQuality()
+    {
+        return quality;
+    }
+    */
     private static final float cos19_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 19.0 / 64.0)));
     private static final float cos21_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 21.0 / 64.0)));
     private static final float cos23_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 23.0 / 64.0)));
@@ -116,17 +116,18 @@ final class SynthesisFilter {
     private static float[][] d16 = null;
     private final float[] v1;
     private final float[] v2;
-    private float[] actual_v;            // v1 or v2
-    private int actual_write_pos;    // 0-15
     private final float[] samples;            // 32 new subband samples
     private final int channel;
     private final float scalefactor;
-    private float[] eq;
     /**
      * Compute PCM Samples.
      */
 
     private final float[] _tmpOut = new float[32];
+    private float[] actual_v;            // v1 or v2
+    private int actual_write_pos;    // 0-15
+    private float[] eq;
+
     /**
      * Contructor.
      * The scalefactor scales the calculated float pcm samples to short values

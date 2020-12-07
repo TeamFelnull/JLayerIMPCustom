@@ -35,35 +35,28 @@ public class Decoder implements DecoderErrors {
      * The Bistream from which the MPEG audio frames are read.
      */
     //private Bitstream				stream;
-
+    private final Equalizer equalizer = new Equalizer();
     /**
      * The Obuffer instance that will receive the decoded
      * PCM samples.
      */
     private Obuffer output;
-
     /**
      * Synthesis filter for the left channel.
      */
     private SynthesisFilter filter1;
-
     /**
      * Sythesis filter for the right channel.
      */
     private SynthesisFilter filter2;
-
     /**
      * The decoder used to decode layer III frames.
      */
     private LayerIIIDecoder l3decoder;
     private LayerIIDecoder l2decoder;
     private LayerIDecoder l1decoder;
-
     private int outputFrequency;
     private int outputChannels;
-
-    private final Equalizer equalizer = new Equalizer();
-
     private boolean initialized;
 
 
@@ -81,7 +74,7 @@ public class Decoder implements DecoderErrors {
      * parameters.
      *
      * @param params0 The <code>Params</code> instance that describes
-     *               the customizable aspects of the decoder.
+     *                the customizable aspects of the decoder.
      */
     public Decoder(Params params0) {
         if (params0 == null)
@@ -117,7 +110,7 @@ public class Decoder implements DecoderErrors {
     /**
      * Decodes one frame from an MPEG audio bitstream.
      *
-     * @param header    The header describing the frame to decode.
+     * @param header The header describing the frame to decode.
      * @param stream The bistream that provides the bits for te body of the frame.
      * @return A SampleBuffer containing the decoded samples.
      */
@@ -152,7 +145,6 @@ public class Decoder implements DecoderErrors {
      * Retrieves the sample frequency of the PCM samples output
      * by this decoder. This typically corresponds to the sample
      * rate encoded in the MPEG audio stream.
-     *
      */
     public int getOutputFrequency() {
         return outputFrequency;
@@ -270,9 +262,8 @@ public class Decoder implements DecoderErrors {
      * Instances of this class are not thread safe.
      */
     public static class Params implements Cloneable {
-        private OutputChannels outputChannels = OutputChannels.BOTH;
-
         private final Equalizer equalizer = new Equalizer();
+        private OutputChannels outputChannels = OutputChannels.BOTH;
 
         public Params() {
         }

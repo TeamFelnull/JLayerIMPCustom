@@ -45,9 +45,10 @@ public class RiffFile {
     public static final int RFM_UNKNOWN = 0;           // undefined type (can use to mean "N/A" or "not open")
     public static final int RFM_WRITE = 1;               // open for write
     public static final int RFM_READ = 2;               // open for read
+    private final RiffChunkHeader riff_header;      // header for whole file
     protected int fmode;            // current file I/O mode
     protected RandomAccessFile file;             // I/O stream to use
-    private final RiffChunkHeader riff_header;      // header for whole file
+
     /**
      * Dummy Constructor
      */
@@ -281,7 +282,7 @@ public class RiffFile {
      * Expect NumBytes data.
      */
     public int Expect(String Data, int NumBytes) {
-        byte target ;
+        byte target;
         int cnt = 0;
         try {
             while ((NumBytes--) != 0) {
