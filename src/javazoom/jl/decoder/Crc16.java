@@ -28,7 +28,7 @@ package javazoom.jl.decoder;
  * 16-Bit CRC checksum
  */
 public final class Crc16 {
-    private static short polynomial = (short) 0x8005;
+    private static final short polynomial = (short) 0x8005;
     private short crc;
 
     /**

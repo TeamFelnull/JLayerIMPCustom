@@ -175,15 +175,15 @@ public class Converter {
      * and to provide new information as it becomes available.
      */
 
-    static public interface ProgressListener {
-        public static final int UPDATE_FRAME_COUNT = 1;
+    public interface ProgressListener {
+        int UPDATE_FRAME_COUNT = 1;
 
         /**
          * Conversion is complete. Param1 contains the time
          * to convert in milliseconds. Param2 contains the number
          * of MPEG audio frames converted.
          */
-        public static final int UPDATE_CONVERT_COMPLETE = 2;
+        int UPDATE_CONVERT_COMPLETE = 2;
 
 
         /**
@@ -200,13 +200,13 @@ public class Converter {
          *                 UPDATE_CONVERT_COMPLETE: param1 is the conversion time, param2
          *                 is the number of frames converted.
          */
-        public void converterUpdate(int updateID, int param1, int param2);
+        void converterUpdate(int updateID, int param1, int param2);
 
         /**
          * If the converter wishes to make a first pass over the
          * audio frames, this is called as each frame is parsed.
          */
-        public void parsedFrame(int frameNo, Header header);
+        void parsedFrame(int frameNo, Header header);
 
         /**
          * This method is called after each frame has been read,
@@ -215,7 +215,7 @@ public class Converter {
          * @param frameNo The 0-based sequence number of the frame.
          * @param header  The Header rerpesenting the frame just read.
          */
-        public void readFrame(int frameNo, Header header);
+        void readFrame(int frameNo, Header header);
 
         /**
          * This method is called after a frame has been decoded.
@@ -224,12 +224,14 @@ public class Converter {
          * @param header  The Header rerpesenting the frame just read.
          * @param o       The Obuffer the deocded data was written to.
          */
-        public void decodedFrame(int frameNo, Header header, Obuffer o);
+        void decodedFrame(int frameNo, Header header, Obuffer o);
 
         /**
          * Called when an exception is thrown during while converting
          * a frame.
          *
+         * @param t The <code>Throwable</code> instance that
+         *          was thrown.
          * @return <code>true</code> to continue processing, or false
          * to abort conversion.
          * <p>
@@ -237,10 +239,8 @@ public class Converter {
          * is propagated to the caller of the convert() method. If
          * <code>true</code> is returned, the exception is silently
          * ignored and the converter moves onto the next frame.
-         * @param    t    The <code>Throwable</code> instance that
-         * was thrown.
          */
-        public boolean converterException(Throwable t);
+        boolean converterException(Throwable t);
 
     }
 
@@ -271,20 +271,19 @@ public class Converter {
 
         static public final int MAX_DETAIL = 10;
 
-        private PrintWriter pw;
+        private final PrintWriter pw;
 
-        private int detailLevel;
-
-        static public PrintWriterProgressListener newStdOut(int detail) {
-            return new PrintWriterProgressListener(
-                    new PrintWriter(System.out, true), detail);
-        }
+        private final int detailLevel;
 
         public PrintWriterProgressListener(PrintWriter writer, int detailLevel) {
             this.pw = writer;
             this.detailLevel = detailLevel;
         }
 
+        static public PrintWriterProgressListener newStdOut(int detail) {
+            return new PrintWriterProgressListener(
+                    new PrintWriter(System.out, true), detail);
+        }
 
         public boolean isDetail(int detail) {
             return (this.detailLevel >= detail);

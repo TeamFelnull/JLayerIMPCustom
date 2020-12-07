@@ -41,6 +41,13 @@ public class jlp {
     private String fFilename = null;
     private boolean remote = false;
 
+    private jlp() {
+    }
+
+    public jlp(String filename) {
+        init(filename);
+    }
+
     public static void main(String[] args) {
         int retval = 0;
         try {
@@ -60,13 +67,6 @@ public class jlp {
         if (!player.parseArgs(args))
             player = null;
         return player;
-    }
-
-    private jlp() {
-    }
-
-    public jlp(String filename) {
-        init(filename);
     }
 
     protected void init(String filename) {
@@ -95,7 +95,7 @@ public class jlp {
 
     public void showUsage() {
         System.out.println("Usage: jlp [-url] <filename>");
-        System.out.println("");
+        System.out.println();
         System.out.println(" e.g. : java javazoom.jl.player.jlp localfile.mp3");
         System.out.println("        java javazoom.jl.player.jlp -url http://www.server.com/remotefile.mp3");
         System.out.println("        java javazoom.jl.player.jlp -url http://www.shoutcastserver.com:8000");

@@ -33,11 +33,11 @@ public class AdvancedPlayer {
     /**
      * The MPEG audio bitstream.
      */
-    private Bitstream bitstream;
+    private final Bitstream bitstream;
     /**
      * The MPEG audio decoder.
      */
-    private Decoder decoder;
+    private final Decoder decoder;
     /**
      * The AudioDevice the audio samples are written to.
      */
@@ -203,17 +203,17 @@ public class AdvancedPlayer {
     }
 
     /**
-     * sets the <code>PlaybackListener</code>
-     */
-    public void setPlayBackListener(PlaybackListener listener) {
-        this.listener = listener;
-    }
-
-    /**
      * gets the <code>PlaybackListener</code>
      */
     public PlaybackListener getPlayBackListener() {
         return listener;
+    }
+
+    /**
+     * sets the <code>PlaybackListener</code>
+     */
+    public void setPlayBackListener(PlaybackListener listener) {
+        this.listener = listener;
     }
 
     /**

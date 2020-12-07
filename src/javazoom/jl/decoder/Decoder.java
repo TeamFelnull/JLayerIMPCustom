@@ -24,8 +24,8 @@ package javazoom.jl.decoder;
  * The <code>Decoder</code> class encapsulates the details of
  * decoding an MPEG audio frame.
  *
- * @version 0.0.7 12/12/99
  * @author MDM
+ * @version 0.0.7 12/12/99
  * @since 0.0.5
  */
 public class Decoder implements DecoderErrors {
@@ -62,9 +62,9 @@ public class Decoder implements DecoderErrors {
     private int outputFrequency;
     private int outputChannels;
 
-    private Equalizer equalizer = new Equalizer();
+    private final Equalizer equalizer = new Equalizer();
 
-    private Params params;
+    private final Params params;
 
     private boolean initialized;
 
@@ -278,7 +278,7 @@ public class Decoder implements DecoderErrors {
     public static class Params implements Cloneable {
         private OutputChannels outputChannels = OutputChannels.BOTH;
 
-        private Equalizer equalizer = new Equalizer();
+        private final Equalizer equalizer = new Equalizer();
 
         public Params() {
         }
@@ -291,15 +291,15 @@ public class Decoder implements DecoderErrors {
             }
         }
 
+        public OutputChannels getOutputChannels() {
+            return outputChannels;
+        }
+
         public void setOutputChannels(OutputChannels out) {
             if (out == null)
                 throw new NullPointerException("out");
 
             outputChannels = out;
-        }
-
-        public OutputChannels getOutputChannels() {
-            return outputChannels;
         }
 
         /**
@@ -322,6 +322,5 @@ public class Decoder implements DecoderErrors {
 
     }
 
-    ;
 }
 

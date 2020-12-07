@@ -42,7 +42,7 @@ import java.io.PrintWriter;
  */
 public class jlc {
 
-    static public void main(String args[]) {
+    static public void main(String[] args) {
         String[] argv;
         long start = System.currentTimeMillis();
         int argc = args.length + 1;
@@ -187,12 +187,11 @@ public class jlc {
 	     System.out.println("  -s         write pcm samples to stdout");
 	     System.out.println("  -d         downmix mode (layer III only)");*/
             System.out.println("  -p name    output as a PCM wave file");
-            System.out.println("");
+            System.out.println();
             System.out.println("  More info on http://www.javazoom.net");
             /* System.out.println("  -f ushort  use this scalefactor instead of the default value 32768");*/
             return false;
         }
     }
 
-    ;
-};
+}

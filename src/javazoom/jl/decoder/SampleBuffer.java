@@ -30,10 +30,10 @@ package javazoom.jl.decoder;
  * that provides storage for a fixed size block of samples.
  */
 public class SampleBuffer extends Obuffer {
-    private short[] buffer;
-    private int[] bufferp;
-    private int channels;
-    private int frequency;
+    private final short[] buffer;
+    private final int[] bufferp;
+    private final int channels;
+    private final int frequency;
 
     /**
      * Constructor

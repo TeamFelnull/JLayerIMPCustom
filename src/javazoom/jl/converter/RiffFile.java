@@ -33,15 +33,6 @@ import java.io.RandomAccessFile;
  * Class to manage RIFF files
  */
 public class RiffFile {
-    class RiffChunkHeader {
-        public int ckID = 0;       // Four-character chunk ID
-        public int ckSize = 0;     // Length of data in chunk
-
-        public RiffChunkHeader() {
-        }
-    }
-
-
     // DDCRET
     public static final int DDC_SUCCESS = 0;           // The operation succeded
     public static final int DDC_FAILURE = 1;           // The operation failed for unspecified reasons
@@ -50,16 +41,13 @@ public class RiffFile {
     public static final int DDC_INVALID_CALL = 4;      // Operation was called with invalid parameters
     public static final int DDC_USER_ABORT = 5;        // Operation was aborted by the user
     public static final int DDC_INVALID_FILE = 6;      // File format does not match
-
     // RiffFileMode
     public static final int RFM_UNKNOWN = 0;           // undefined type (can use to mean "N/A" or "not open")
     public static final int RFM_WRITE = 1;               // open for write
     public static final int RFM_READ = 2;               // open for read
-
-    private RiffChunkHeader riff_header;      // header for whole file
     protected int fmode;            // current file I/O mode
     protected RandomAccessFile file;             // I/O stream to use
-
+    private final RiffChunkHeader riff_header;      // header for whole file
     /**
      * Dummy Constructor
      */
@@ -70,6 +58,16 @@ public class RiffFile {
 
         riff_header.ckID = FourCC("RIFF");
         riff_header.ckSize = 0;
+    }
+
+    /**
+     * Fill the header.
+     */
+    public static int FourCC(String ChunkName) {
+        byte[] p = {0x20, 0x20, 0x20, 0x20};
+        ChunkName.getBytes(0, 4, p, 0);
+        int ret = (((p[0] << 24) & 0xFF000000) | ((p[1] << 16) & 0x00FF0000) | ((p[2] << 8) & 0x0000FF00) | (p[3] & 0x000000FF));
+        return ret;
     }
 
     /**
@@ -420,14 +418,12 @@ public class RiffFile {
         return "Unknown Error";
     }
 
-    /**
-     * Fill the header.
-     */
-    public static int FourCC(String ChunkName) {
-        byte[] p = {0x20, 0x20, 0x20, 0x20};
-        ChunkName.getBytes(0, 4, p, 0);
-        int ret = (((p[0] << 24) & 0xFF000000) | ((p[1] << 16) & 0x00FF0000) | ((p[2] << 8) & 0x0000FF00) | (p[3] & 0x000000FF));
-        return ret;
+    class RiffChunkHeader {
+        public int ckID = 0;       // Four-character chunk ID
+        public int ckSize = 0;     // Length of data in chunk
+
+        public RiffChunkHeader() {
+        }
     }
 
 }

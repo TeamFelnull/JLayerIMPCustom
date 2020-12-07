@@ -39,16 +39,15 @@ public class DecoderException extends JavaLayerException
         this.errorcode = errorcode;
     }
 
-    public int getErrorCode() {
-        return errorcode;
-    }
-
-
     static public String getErrorString(int errorcode) {
         // REVIEW: use resource file to map error codes
-        // to locale-sensitive strings. 
+        // to locale-sensitive strings.
 
         return "Decoder errorcode " + Integer.toHexString(errorcode);
+    }
+
+    public int getErrorCode() {
+        return errorcode;
     }
 
 

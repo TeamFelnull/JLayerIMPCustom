@@ -53,9 +53,8 @@ final class BitReserve {
      * modulus operation on BUFSIZE.
      */
     private static final int BUFSIZE_MASK = BUFSIZE - 1;
-
-    private int offset, totbit, buf_byte_idx;
     private final int[] buf = new int[BUFSIZE];
+    private int offset, totbit, buf_byte_idx;
     private int buf_bit_idx;
 
     BitReserve() {

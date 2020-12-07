@@ -38,14 +38,14 @@ import java.io.IOException;
  * Frequencies above 4 kHz are removed by ignoring higher subbands.
  */
 final class SynthesisFilter {
-    private float[] v1;
-    private float[] v2;
-    private float[] actual_v;            // v1 or v2
-    private int actual_write_pos;    // 0-15
-    private float[] samples;            // 32 new subband samples
-    private int channel;
-    private float scalefactor;
-    private float[] eq;
+    private static final double MY_PI = 3.14159265358979323846;
+    private static final float cos1_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 64.0)));
+    private static final float cos3_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 64.0)));
+    private static final float cos5_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 5.0 / 64.0)));
+    private static final float cos7_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 7.0 / 64.0)));
+    private static final float cos9_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 9.0 / 64.0)));
+    private static final float cos11_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 11.0 / 64.0)));
+    private static final float cos13_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 13.0 / 64.0)));
 
     /**
      * Quality value for controlling CPU usage/quality tradeoff.
@@ -61,41 +61,8 @@ final class SynthesisFilter {
 	public static final int MEDIUM_QUALITY = 2;
 	public static final int LOW_QUALITY = 4;
 	*/
-
-    /**
-     * Contructor.
-     * The scalefactor scales the calculated float pcm samples to short values
-     * (raw pcm samples are in [-1.0, 1.0], if no violations occur).
-     */
-    public SynthesisFilter(int channelnumber, float factor, float[] eq0) {
-        if (d == null) {
-            d = load_d();
-            d16 = splitArray(d, 16);
-        }
-
-        v1 = new float[512];
-        v2 = new float[512];
-        samples = new float[32];
-        channel = channelnumber;
-        scalefactor = factor;
-        setEQ(eq);
-        //setQuality(HIGH_QUALITY);
-
-        reset();
-    }
-
-    public void setEQ(float[] eq0) {
-        this.eq = eq0;
-        if (eq == null) {
-            eq = new float[32];
-            for (int i = 0; i < 32; i++)
-                eq[i] = 1.0f;
-        }
-        if (eq.length < 32) {
-            throw new IllegalArgumentException("eq0");
-        }
-
-    }
+    private static final float cos15_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 15.0 / 64.0)));
+    private static final float cos17_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 17.0 / 64.0)));
   
 	/*
 	private void setQuality(int quality0)
@@ -118,6 +85,144 @@ final class SynthesisFilter {
 		return quality;	
 	}
 	*/
+    private static final float cos19_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 19.0 / 64.0)));
+    private static final float cos21_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 21.0 / 64.0)));
+    private static final float cos23_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 23.0 / 64.0)));
+    private static final float cos25_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 25.0 / 64.0)));
+    private static final float cos27_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 27.0 / 64.0)));
+    private static final float cos29_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 29.0 / 64.0)));
+    private static final float cos31_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 31.0 / 64.0)));
+    private static final float cos1_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 32.0)));
+    private static final float cos3_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 32.0)));
+    private static final float cos5_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 5.0 / 32.0)));
+    private static final float cos7_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 7.0 / 32.0)));
+    private static final float cos9_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 9.0 / 32.0)));
+    private static final float cos11_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 11.0 / 32.0)));
+    private static final float cos13_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 13.0 / 32.0)));
+    private static final float cos15_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 15.0 / 32.0)));
+    private static final float cos1_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 16.0)));
+    private static final float cos3_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 16.0)));
+    private static final float cos5_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 5.0 / 16.0)));
+    private static final float cos7_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 7.0 / 16.0)));
+    private static final float cos1_8 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 8.0)));
+    private static final float cos3_8 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 8.0)));
+    private static final float cos1_4 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 4.0)));
+    private static float[] d = null;
+    /**
+     * d[] split into subarrays of length 16. This provides for
+     * more faster access by allowing a block of 16 to be addressed
+     * with constant offset.
+     **/
+    private static float[][] d16 = null;
+    private final float[] v1;
+    private final float[] v2;
+    private float[] actual_v;            // v1 or v2
+    private int actual_write_pos;    // 0-15
+    private final float[] samples;            // 32 new subband samples
+    private final int channel;
+    private final float scalefactor;
+    private float[] eq;
+    /**
+     * Compute PCM Samples.
+     */
+
+    private final float[] _tmpOut = new float[32];
+    /**
+     * Contructor.
+     * The scalefactor scales the calculated float pcm samples to short values
+     * (raw pcm samples are in [-1.0, 1.0], if no violations occur).
+     */
+    public SynthesisFilter(int channelnumber, float factor, float[] eq0) {
+        if (d == null) {
+            d = load_d();
+            d16 = splitArray(d, 16);
+        }
+
+        v1 = new float[512];
+        v2 = new float[512];
+        samples = new float[32];
+        channel = channelnumber;
+        scalefactor = factor;
+        setEQ(eq);
+        //setQuality(HIGH_QUALITY);
+
+        reset();
+    }
+
+    /**
+     * Loads the data for the d[] from the resource SFd.ser.
+     *
+     * @return the loaded values for d[].
+     */
+    static private float[] load_d() {
+        try {
+            Class elemType = Float.TYPE;
+            Object o = JavaLayerUtils.deserializeArrayResource("sfd.ser", elemType, 512);
+            return (float[]) o;
+        } catch (IOException ex) {
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    /**
+     * Converts a 1D array into a number of smaller arrays. This is used
+     * to achieve offset + constant indexing into an array. Each sub-array
+     * represents a block of values of the original array.
+     *
+     * @param array     The array to split up into blocks.
+     * @param blockSize The size of the blocks to split the array
+     *                  into. This must be an exact divisor of
+     *                  the length of the array, or some data
+     *                  will be lost from the main array.
+     * @return An array of arrays in which each element in the returned
+     * array will be of length <code>blockSize</code>.
+     */
+    static private float[][] splitArray(final float[] array, final int blockSize) {
+        int size = array.length / blockSize;
+        float[][] split = new float[size][];
+        for (int i = 0; i < size; i++) {
+            split[i] = subArray(array, i * blockSize, blockSize);
+        }
+        return split;
+    }
+
+    /**
+     * Returns a subarray of an existing array.
+     *
+     * @param array The array to retrieve a subarra from.
+     * @param offs  The offset in the array that corresponds to
+     *              the first index of the subarray.
+     * @param len   The number of indeces in the subarray.
+     * @return The subarray, which may be of length 0.
+     */
+    static private float[] subArray(final float[] array, final int offs, int len) {
+        if (offs + len > array.length) {
+            len = array.length - offs;
+        }
+
+        if (len < 0)
+            len = 0;
+
+        float[] subarray = new float[len];
+        for (int i = 0; i < len; i++) {
+            subarray[i] = array[offs + i];
+        }
+
+        return subarray;
+    }
+
+    public void setEQ(float[] eq0) {
+        this.eq = eq0;
+        if (eq == null) {
+            eq = new float[32];
+            for (int i = 0; i < 32; i++)
+                eq[i] = 1.0f;
+        }
+        if (eq.length < 32) {
+            throw new IllegalArgumentException("eq0");
+        }
+
+    }
 
     /**
      * Reset the synthesis filter.
@@ -141,7 +246,6 @@ final class SynthesisFilter {
         actual_v = v1;
         actual_write_pos = 15;
     }
-
 
     /**
      * Inject Sample.
@@ -170,7 +274,7 @@ final class SynthesisFilter {
         //float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
         //float[] p = new float[16];
         //float[] pp = new float[16];
-	  
+
 	 /*
 	 for (int i=31; i>=0; i--)
 	 {
@@ -436,7 +540,7 @@ final class SynthesisFilter {
 
         // insert V[0-15] (== new_v[0-15]) into actual v:
         // float[] x2 = actual_v + actual_write_pos;
-        float dest[] = actual_v;
+        float[] dest = actual_v;
 
         int pos = actual_write_pos;
 
@@ -553,7 +657,7 @@ final class SynthesisFilter {
 		v1[448 + actual_write_pos] = new_v19;
 		v1[464 + actual_write_pos] = new_v18;
 		v1[480 + actual_write_pos] = new_v17;
-		v1[496 + actual_write_pos] = new_v16;	
+		v1[496 + actual_write_pos] = new_v16;
 	}
 */
     }
@@ -836,13 +940,6 @@ final class SynthesisFilter {
 
     }
 
-    /**
-     * Compute PCM Samples.
-     */
-
-    private float[] _tmpOut = new float[32];
-
-
     private void compute_pcm_samples0(Obuffer buffer) {
         final float[] vp = actual_v;
         //int inc = v_inc;
@@ -853,7 +950,7 @@ final class SynthesisFilter {
         for (int i = 0; i < 32; i++) {
             float pcm_sample;
             final float[] dp = d16[i];
-            pcm_sample = (float) (((vp[0 + dvp] * dp[0]) +
+            pcm_sample = ((vp[0 + dvp] * dp[0]) +
                     (vp[15 + dvp] * dp[1]) +
                     (vp[14 + dvp] * dp[2]) +
                     (vp[13 + dvp] * dp[3]) +
@@ -869,7 +966,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[13]) +
                     (vp[2 + dvp] * dp[14]) +
                     (vp[1 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -888,7 +985,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[1 + dvp] * dp[0]) +
+            pcm_sample = ((vp[1 + dvp] * dp[0]) +
                     (vp[0 + dvp] * dp[1]) +
                     (vp[15 + dvp] * dp[2]) +
                     (vp[14 + dvp] * dp[3]) +
@@ -904,7 +1001,7 @@ final class SynthesisFilter {
                     (vp[4 + dvp] * dp[13]) +
                     (vp[3 + dvp] * dp[14]) +
                     (vp[2 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -924,7 +1021,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[2 + dvp] * dp[0]) +
+            pcm_sample = ((vp[2 + dvp] * dp[0]) +
                     (vp[1 + dvp] * dp[1]) +
                     (vp[0 + dvp] * dp[2]) +
                     (vp[15 + dvp] * dp[3]) +
@@ -940,7 +1037,7 @@ final class SynthesisFilter {
                     (vp[5 + dvp] * dp[13]) +
                     (vp[4 + dvp] * dp[14]) +
                     (vp[3 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -961,7 +1058,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[3 + dvp] * dp[0]) +
+            pcm_sample = ((vp[3 + dvp] * dp[0]) +
                     (vp[2 + dvp] * dp[1]) +
                     (vp[1 + dvp] * dp[2]) +
                     (vp[0 + dvp] * dp[3]) +
@@ -977,7 +1074,7 @@ final class SynthesisFilter {
                     (vp[6 + dvp] * dp[13]) +
                     (vp[5 + dvp] * dp[14]) +
                     (vp[4 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -997,7 +1094,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[4 + dvp] * dp[0]) +
+            pcm_sample = ((vp[4 + dvp] * dp[0]) +
                     (vp[3 + dvp] * dp[1]) +
                     (vp[2 + dvp] * dp[2]) +
                     (vp[1 + dvp] * dp[3]) +
@@ -1013,7 +1110,7 @@ final class SynthesisFilter {
                     (vp[7 + dvp] * dp[13]) +
                     (vp[6 + dvp] * dp[14]) +
                     (vp[5 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1033,7 +1130,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[5 + dvp] * dp[0]) +
+            pcm_sample = ((vp[5 + dvp] * dp[0]) +
                     (vp[4 + dvp] * dp[1]) +
                     (vp[3 + dvp] * dp[2]) +
                     (vp[2 + dvp] * dp[3]) +
@@ -1049,7 +1146,7 @@ final class SynthesisFilter {
                     (vp[8 + dvp] * dp[13]) +
                     (vp[7 + dvp] * dp[14]) +
                     (vp[6 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1068,7 +1165,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[6 + dvp] * dp[0]) +
+            pcm_sample = ((vp[6 + dvp] * dp[0]) +
                     (vp[5 + dvp] * dp[1]) +
                     (vp[4 + dvp] * dp[2]) +
                     (vp[3 + dvp] * dp[3]) +
@@ -1084,7 +1181,7 @@ final class SynthesisFilter {
                     (vp[9 + dvp] * dp[13]) +
                     (vp[8 + dvp] * dp[14]) +
                     (vp[7 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1104,7 +1201,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[7 + dvp] * dp[0]) +
+            pcm_sample = ((vp[7 + dvp] * dp[0]) +
                     (vp[6 + dvp] * dp[1]) +
                     (vp[5 + dvp] * dp[2]) +
                     (vp[4 + dvp] * dp[3]) +
@@ -1120,7 +1217,7 @@ final class SynthesisFilter {
                     (vp[10 + dvp] * dp[13]) +
                     (vp[9 + dvp] * dp[14]) +
                     (vp[8 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1140,7 +1237,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[8 + dvp] * dp[0]) +
+            pcm_sample = ((vp[8 + dvp] * dp[0]) +
                     (vp[7 + dvp] * dp[1]) +
                     (vp[6 + dvp] * dp[2]) +
                     (vp[5 + dvp] * dp[3]) +
@@ -1156,7 +1253,7 @@ final class SynthesisFilter {
                     (vp[11 + dvp] * dp[13]) +
                     (vp[10 + dvp] * dp[14]) +
                     (vp[9 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1176,7 +1273,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[9 + dvp] * dp[0]) +
+            pcm_sample = ((vp[9 + dvp] * dp[0]) +
                     (vp[8 + dvp] * dp[1]) +
                     (vp[7 + dvp] * dp[2]) +
                     (vp[6 + dvp] * dp[3]) +
@@ -1192,7 +1289,7 @@ final class SynthesisFilter {
                     (vp[12 + dvp] * dp[13]) +
                     (vp[11 + dvp] * dp[14]) +
                     (vp[10 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1211,7 +1308,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[10 + dvp] * dp[0]) +
+            pcm_sample = ((vp[10 + dvp] * dp[0]) +
                     (vp[9 + dvp] * dp[1]) +
                     (vp[8 + dvp] * dp[2]) +
                     (vp[7 + dvp] * dp[3]) +
@@ -1227,7 +1324,7 @@ final class SynthesisFilter {
                     (vp[13 + dvp] * dp[13]) +
                     (vp[12 + dvp] * dp[14]) +
                     (vp[11 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1247,7 +1344,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[11 + dvp] * dp[0]) +
+            pcm_sample = ((vp[11 + dvp] * dp[0]) +
                     (vp[10 + dvp] * dp[1]) +
                     (vp[9 + dvp] * dp[2]) +
                     (vp[8 + dvp] * dp[3]) +
@@ -1263,7 +1360,7 @@ final class SynthesisFilter {
                     (vp[14 + dvp] * dp[13]) +
                     (vp[13 + dvp] * dp[14]) +
                     (vp[12 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1282,7 +1379,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[12 + dvp] * dp[0]) +
+            pcm_sample = ((vp[12 + dvp] * dp[0]) +
                     (vp[11 + dvp] * dp[1]) +
                     (vp[10 + dvp] * dp[2]) +
                     (vp[9 + dvp] * dp[3]) +
@@ -1298,13 +1395,17 @@ final class SynthesisFilter {
                     (vp[15 + dvp] * dp[13]) +
                     (vp[14 + dvp] * dp[14]) +
                     (vp[13 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
     }
+
+    // Note: These values are not in the same order
+    // as in Annex 3-B.3 of the ISO/IEC DIS 11172-3
+    // private float d[] = {0.000000000, -4.000442505};
 
     private void compute_pcm_samples13(Obuffer buffer) {
         final float[] vp = actual_v;
@@ -1318,7 +1419,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[13 + dvp] * dp[0]) +
+            pcm_sample = ((vp[13 + dvp] * dp[0]) +
                     (vp[12 + dvp] * dp[1]) +
                     (vp[11 + dvp] * dp[2]) +
                     (vp[10 + dvp] * dp[3]) +
@@ -1334,7 +1435,7 @@ final class SynthesisFilter {
                     (vp[0 + dvp] * dp[13]) +
                     (vp[15 + dvp] * dp[14]) +
                     (vp[14 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1354,7 +1455,7 @@ final class SynthesisFilter {
             final float[] dp = d16[i];
             float pcm_sample;
 
-            pcm_sample = (float) (((vp[14 + dvp] * dp[0]) +
+            pcm_sample = ((vp[14 + dvp] * dp[0]) +
                     (vp[13 + dvp] * dp[1]) +
                     (vp[12 + dvp] * dp[2]) +
                     (vp[11 + dvp] * dp[3]) +
@@ -1370,7 +1471,7 @@ final class SynthesisFilter {
                     (vp[1 + dvp] * dp[13]) +
                     (vp[0 + dvp] * dp[14]) +
                     (vp[15 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
 
@@ -1388,8 +1489,8 @@ final class SynthesisFilter {
         // fat chance of having this loop unroll
         for (int i = 0; i < 32; i++) {
             float pcm_sample;
-            final float dp[] = d16[i];
-            pcm_sample = (float) (((vp[15 + dvp] * dp[0]) +
+            final float[] dp = d16[i];
+            pcm_sample = ((vp[15 + dvp] * dp[0]) +
                     (vp[14 + dvp] * dp[1]) +
                     (vp[13 + dvp] * dp[2]) +
                     (vp[12 + dvp] * dp[3]) +
@@ -1405,7 +1506,7 @@ final class SynthesisFilter {
                     (vp[2 + dvp] * dp[13]) +
                     (vp[1 + dvp] * dp[14]) +
                     (vp[0 + dvp] * dp[15])
-            ) * scalefactor);
+            ) * scalefactor;
 
             tmpOut[i] = pcm_sample;
             dvp += 16;
@@ -1468,33 +1569,33 @@ final class SynthesisFilter {
         if (buffer != null) {
             buffer.appendSamples(channel, _tmpOut);
         }
-	 
+
 /*
 	 // MDM: I was considering putting in quality control for
-	 // low-spec CPUs, but the performance gain (about 10-15%) 
+	 // low-spec CPUs, but the performance gain (about 10-15%)
 	 // did not justify the considerable drop in audio quality.
 		switch (inc)
 		{
-		case 16:		 
+		case 16:
 		    buffer.appendSamples(channel, tmpOut);
 		    break;
 		case 32:
 			for (int i=0; i<16; i++)
 			{
 				buffer.append(channel, (short)tmpOut[i]);
-				buffer.append(channel, (short)tmpOut[i]); 
+				buffer.append(channel, (short)tmpOut[i]);
 			}
-			break;			
+			break;
 		case 64:
 			for (int i=0; i<8; i++)
 			{
 				buffer.append(channel, (short)tmpOut[i]);
 				buffer.append(channel, (short)tmpOut[i]);
 				buffer.append(channel, (short)tmpOut[i]);
-				buffer.append(channel, (short)tmpOut[i]); 
+				buffer.append(channel, (short)tmpOut[i]);
 			}
-			break;			
-	
+			break;
+
 		}
 */
     }
@@ -1518,115 +1619,6 @@ final class SynthesisFilter {
         // outputs 32 subband samples, but I haven't checked layer I & II.
         for (int p = 0; p < 32; p++)
             samples[p] = 0.0f;
-    }
-
-
-    private static final double MY_PI = 3.14159265358979323846;
-    private static final float cos1_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 64.0)));
-    private static final float cos3_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 64.0)));
-    private static final float cos5_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 5.0 / 64.0)));
-    private static final float cos7_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 7.0 / 64.0)));
-    private static final float cos9_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 9.0 / 64.0)));
-    private static final float cos11_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 11.0 / 64.0)));
-    private static final float cos13_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 13.0 / 64.0)));
-    private static final float cos15_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 15.0 / 64.0)));
-    private static final float cos17_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 17.0 / 64.0)));
-    private static final float cos19_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 19.0 / 64.0)));
-    private static final float cos21_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 21.0 / 64.0)));
-    private static final float cos23_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 23.0 / 64.0)));
-    private static final float cos25_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 25.0 / 64.0)));
-    private static final float cos27_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 27.0 / 64.0)));
-    private static final float cos29_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 29.0 / 64.0)));
-    private static final float cos31_64 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 31.0 / 64.0)));
-    private static final float cos1_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 32.0)));
-    private static final float cos3_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 32.0)));
-    private static final float cos5_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 5.0 / 32.0)));
-    private static final float cos7_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 7.0 / 32.0)));
-    private static final float cos9_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 9.0 / 32.0)));
-    private static final float cos11_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 11.0 / 32.0)));
-    private static final float cos13_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 13.0 / 32.0)));
-    private static final float cos15_32 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 15.0 / 32.0)));
-    private static final float cos1_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 16.0)));
-    private static final float cos3_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 16.0)));
-    private static final float cos5_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 5.0 / 16.0)));
-    private static final float cos7_16 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 7.0 / 16.0)));
-    private static final float cos1_8 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 8.0)));
-    private static final float cos3_8 = (float) (1.0 / (2.0 * Math.cos(MY_PI * 3.0 / 8.0)));
-    private static final float cos1_4 = (float) (1.0 / (2.0 * Math.cos(MY_PI / 4.0)));
-
-    // Note: These values are not in the same order
-    // as in Annex 3-B.3 of the ISO/IEC DIS 11172-3
-    // private float d[] = {0.000000000, -4.000442505};
-
-    private static float d[] = null;
-
-    /**
-     * d[] split into subarrays of length 16. This provides for
-     * more faster access by allowing a block of 16 to be addressed
-     * with constant offset.
-     **/
-    private static float d16[][] = null;
-
-    /**
-     * Loads the data for the d[] from the resource SFd.ser.
-     *
-     * @return the loaded values for d[].
-     */
-    static private float[] load_d() {
-        try {
-            Class elemType = Float.TYPE;
-            Object o = JavaLayerUtils.deserializeArrayResource("sfd.ser", elemType, 512);
-            return (float[]) o;
-        } catch (IOException ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
-
-    /**
-     * Converts a 1D array into a number of smaller arrays. This is used
-     * to achieve offset + constant indexing into an array. Each sub-array
-     * represents a block of values of the original array.
-     *
-     * @param array     The array to split up into blocks.
-     * @param blockSize The size of the blocks to split the array
-     *                  into. This must be an exact divisor of
-     *                  the length of the array, or some data
-     *                  will be lost from the main array.
-     * @return An array of arrays in which each element in the returned
-     * array will be of length <code>blockSize</code>.
-     */
-    static private float[][] splitArray(final float[] array, final int blockSize) {
-        int size = array.length / blockSize;
-        float[][] split = new float[size][];
-        for (int i = 0; i < size; i++) {
-            split[i] = subArray(array, i * blockSize, blockSize);
-        }
-        return split;
-    }
-
-    /**
-     * Returns a subarray of an existing array.
-     *
-     * @param array The array to retrieve a subarra from.
-     * @param offs  The offset in the array that corresponds to
-     *              the first index of the subarray.
-     * @param len   The number of indeces in the subarray.
-     * @return The subarray, which may be of length 0.
-     */
-    static private float[] subArray(final float[] array, final int offs, int len) {
-        if (offs + len > array.length) {
-            len = array.length - offs;
-        }
-
-        if (len < 0)
-            len = 0;
-
-        float[] subarray = new float[len];
-        for (int i = 0; i < len; i++) {
-            subarray[i] = array[offs + i];
-        }
-
-        return subarray;
     }
 
     // The original data for d[]. This data is loaded from a file

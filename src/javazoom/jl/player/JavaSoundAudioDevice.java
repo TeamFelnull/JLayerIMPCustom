@@ -43,10 +43,6 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
 
     private byte[] byteBuf = new byte[4096];
 
-    protected void setAudioFormat(AudioFormat fmt0) {
-        fmt = fmt0;
-    }
-
     protected AudioFormat getAudioFormat() {
         if (fmt == null) {
             Decoder decoder = getDecoder();
@@ -57,6 +53,10 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
                     false);
         }
         return fmt;
+    }
+
+    protected void setAudioFormat(AudioFormat fmt0) {
+        fmt = fmt0;
     }
 
     protected DataLine.Info getSourceLineInfo() {

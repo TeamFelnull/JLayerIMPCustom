@@ -145,15 +145,15 @@ public class JavaLayerUtils {
 
     }
 
+    static synchronized public JavaLayerHook getHook() {
+        return hook;
+    }
+
     /**
      * Sets the system-wide JavaLayer hook.
      */
     static synchronized public void setHook(JavaLayerHook hook0) {
         hook = hook0;
-    }
-
-    static synchronized public JavaLayerHook getHook() {
-        return hook;
     }
 
     /**

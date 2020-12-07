@@ -30,8 +30,8 @@ import javazoom.jl.decoder.JavaLayerException;
  * in doing so provide the implementation for the main operations
  * of the <code>AudioDevice</code> interface.
  *
- * @since 0.0.8
  * @author Mat McGowan
+ * @since 0.0.8
  */
 /*
  * REVIEW:  It is desirable to be able to use the decoder whe
@@ -67,13 +67,6 @@ public abstract class AudioDeviceBase implements AudioDevice {
     }
 
     /**
-     * Sets the open state for this audio device.
-     */
-    protected void setOpen(boolean open) {
-        this.open = open;
-    }
-
-    /**
      * Determines if this audio device is open or not.
      *
      * @return <code>true</code> if the audio device is open,
@@ -81,6 +74,13 @@ public abstract class AudioDeviceBase implements AudioDevice {
      */
     public synchronized boolean isOpen() {
         return open;
+    }
+
+    /**
+     * Sets the open state for this audio device.
+     */
+    protected void setOpen(boolean open) {
+        this.open = open;
     }
 
     /**

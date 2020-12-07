@@ -38,18 +38,18 @@ public class Player {
     /**
      * The current frame number.
      */
-    private int frame = 0;
+    private final int frame = 0;
 
     /**
      * The MPEG audio bitstream.
      */
     // javac blank final bug.
-    /*final*/ private Bitstream bitstream;
+    /*final*/ private final Bitstream bitstream;
 
     /**
      * The MPEG audio decoder.
      */
-    /*final*/ private Decoder decoder;
+    /*final*/ private final Decoder decoder;
 
     /**
      * The AudioDevice the audio samples are written to.

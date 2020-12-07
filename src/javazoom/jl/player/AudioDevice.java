@@ -41,8 +41,8 @@ import javazoom.jl.decoder.JavaLayerException;
  *  r<i>x</i> indicates the <i>x</i>th sample on channel 1
  * </code></pre>
  *
- * @since 0.0.8
  * @author Mat McGowan
+ * @since 0.0.8
  */
 public interface AudioDevice {
     /**
@@ -53,7 +53,7 @@ public interface AudioDevice {
      *                <p>
      *                If the audio device is already open, this method returns silently.
      */
-    public void open(Decoder decoder) throws JavaLayerException;
+    void open(Decoder decoder) throws JavaLayerException;
 
     /**
      * Retrieves the open state of this audio device.
@@ -61,7 +61,7 @@ public interface AudioDevice {
      * @return <code>true</code> if this audio device is open and playing
      * audio samples, or <code>false</code> otherwise.
      */
-    public boolean isOpen();
+    boolean isOpen();
 
     /**
      * Writes a number of samples to this <code>AudioDevice</code>.
@@ -74,7 +74,7 @@ public interface AudioDevice {
      *                This method may return prior to the samples actually being played
      *                by the audio device.
      */
-    public void write(short[] samples, int offs, int len) throws JavaLayerException;
+    void write(short[] samples, int offs, int len) throws JavaLayerException;
 
 
     /**
@@ -86,17 +86,17 @@ public interface AudioDevice {
      * on the device (e.g. during a <code>write</code> or <code>flush</code>
      * operation should be unblocked by this method.
      */
-    public void close();
+    void close();
 
 
     /**
      * Blocks until all audio samples previously written to this audio device have
      * been heard.
      */
-    public void flush();
+    void flush();
 
     /**
      * Retrieves the current playback position in milliseconds.
      */
-    public int getPosition();
+    int getPosition();
 }

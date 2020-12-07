@@ -37,6 +37,7 @@ import java.util.Hashtable;
 
 public class FactoryRegistry extends AudioDeviceFactory {
     static private FactoryRegistry instance = null;
+    protected Hashtable factories = new Hashtable();
 
     static synchronized public FactoryRegistry systemRegistry() {
         if (instance == null) {
@@ -45,9 +46,6 @@ public class FactoryRegistry extends AudioDeviceFactory {
         }
         return instance;
     }
-
-
-    protected Hashtable factories = new Hashtable();
 
     /**
      * Registers an <code>AudioDeviceFactory</code> instance

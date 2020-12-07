@@ -58,15 +58,22 @@ public class OutputChannels {
     public static final OutputChannels DOWNMIX = new OutputChannels(DOWNMIX_CHANNELS);
 
 
-    private /*final*/ int outputChannels;
+    private final /*final*/ int outputChannels;
+
+    private OutputChannels(int channels) {
+        outputChannels = channels;
+
+        if (channels < 0 || channels > 3)
+            throw new IllegalArgumentException("channels");
+    }
 
     /**
      * Creates an <code>OutputChannels</code> instance
      * corresponding to the given channel code.
      *
-     * @param    code one of the OutputChannels channel code constants.
+     * @param code one of the OutputChannels channel code constants.
      * @throws IllegalArgumentException if code is not a valid
-     * channel code.
+     *                                  channel code.
      */
     static public OutputChannels fromInt(int code) {
         switch (code) {
@@ -81,13 +88,6 @@ public class OutputChannels {
             default:
                 throw new IllegalArgumentException("Invalid channel code: " + code);
         }
-    }
-
-    private OutputChannels(int channels) {
-        outputChannels = channels;
-
-        if (channels < 0 || channels > 3)
-            throw new IllegalArgumentException("channels");
     }
 
     /**

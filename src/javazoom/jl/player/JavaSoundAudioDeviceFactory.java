@@ -29,9 +29,8 @@ import javazoom.jl.decoder.JavaLayerException;
  * for JavaSound, or they may have the incorrect version.
  */
 public class JavaSoundAudioDeviceFactory extends AudioDeviceFactory {
-    private boolean tested = false;
-
     static private final String DEVICE_CLASS_NAME = "javazoom.jl.player.JavaSoundAudioDevice";
+    private boolean tested = false;
 
     public synchronized AudioDevice createAudioDevice()
             throws JavaLayerException {

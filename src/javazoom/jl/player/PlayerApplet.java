@@ -103,15 +103,15 @@ public class PlayerApplet extends Applet implements Runnable {
         return url;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
     /**
      * Sets the URL of the audio stream to play.
      */
     public void setFileName(String name) {
         fileName = name;
-    }
-
-    public String getFileName() {
-        return fileName;
     }
 
     /**

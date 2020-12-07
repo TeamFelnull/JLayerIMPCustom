@@ -36,10 +36,14 @@ import javazoom.jl.decoder.Obuffer;
 
 
 public class WaveFileObuffer extends Obuffer {
-    private short[] buffer;
-    private short[] bufferp;
-    private int channels;
-    private WaveFile outWave;
+    /**
+     * Write the samples to the file (Random Acces).
+     */
+    short[] myBuffer = new short[2];
+    private final short[] buffer;
+    private final short[] bufferp;
+    private final int channels;
+    private final WaveFile outWave;
 
     /**
      * Creates a new WareFileObuffer instance.
@@ -72,11 +76,6 @@ public class WaveFileObuffer extends Obuffer {
         buffer[bufferp[channel]] = value;
         bufferp[channel] += channels;
     }
-
-    /**
-     * Write the samples to the file (Random Acces).
-     */
-    short[] myBuffer = new short[2];
 
     public void write_buffer(int val) {
 

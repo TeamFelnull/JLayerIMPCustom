@@ -43,17 +43,6 @@ public class jlap {
         }
     }
 
-    public void play(String filename) throws JavaLayerException, IOException {
-        InfoListener lst = new InfoListener();
-        playMp3(new File(filename), lst);
-    }
-
-    public void showUsage() {
-        System.out.println("Usage: jla <filename>");
-        System.out.println("");
-        System.out.println(" e.g. : java javazoom.jl.player.advanced.jlap localfile.mp3");
-    }
-
     public static AdvancedPlayer playMp3(File mp3, PlaybackListener listener) throws IOException, JavaLayerException {
         return playMp3(mp3, 0, Integer.MAX_VALUE, listener);
     }
@@ -76,6 +65,17 @@ public class jlap {
             }
         }.start();
         return player;
+    }
+
+    public void play(String filename) throws JavaLayerException, IOException {
+        InfoListener lst = new InfoListener();
+        playMp3(new File(filename), lst);
+    }
+
+    public void showUsage() {
+        System.out.println("Usage: jla <filename>");
+        System.out.println();
+        System.out.println(" e.g. : java javazoom.jl.player.advanced.jlap localfile.mp3");
     }
 
     public class InfoListener extends PlaybackListener {

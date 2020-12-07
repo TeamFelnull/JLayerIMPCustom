@@ -58,7 +58,74 @@ public final class Header {
     public static final int FOURTYFOUR_POINT_ONE = 0;
     public static final int FOURTYEIGHT = 1;
     public static final int THIRTYTWO = 2;
+    // E.B -> private to public
+    public static final int[][][] bitrates = {
+            {{0 /*free format*/, 32000, 48000, 56000, 64000, 80000, 96000,
+                    112000, 128000, 144000, 160000, 176000, 192000, 224000, 256000, 0},
+                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
+                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0},
+                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
+                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0}},
 
+            {{0 /*free format*/, 32000, 64000, 96000, 128000, 160000, 192000,
+                    224000, 256000, 288000, 320000, 352000, 384000, 416000, 448000, 0},
+                    {0 /*free format*/, 32000, 48000, 56000, 64000, 80000, 96000,
+                            112000, 128000, 160000, 192000, 224000, 256000, 320000, 384000, 0},
+                    {0 /*free format*/, 32000, 40000, 48000, 56000, 64000, 80000,
+                            96000, 112000, 128000, 160000, 192000, 224000, 256000, 320000, 0}},
+            // SZD: MPEG2.5
+            {{0 /*free format*/, 32000, 48000, 56000, 64000, 80000, 96000,
+                    112000, 128000, 144000, 160000, 176000, 192000, 224000, 256000, 0},
+                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
+                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0},
+                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
+                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0}},
+
+    };
+    // E.B -> private to public
+    public static final String[][][] bitrate_str = {
+            {{"free format", "32 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s",
+                    "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s",
+                    "160 kbit/s", "176 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s",
+                    "forbidden"},
+                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
+                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
+                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
+                            "forbidden"},
+                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
+                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
+                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
+                            "forbidden"}},
+
+            {{"free format", "32 kbit/s", "64 kbit/s", "96 kbit/s", "128 kbit/s",
+                    "160 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s", "288 kbit/s",
+                    "320 kbit/s", "352 kbit/s", "384 kbit/s", "416 kbit/s", "448 kbit/s",
+                    "forbidden"},
+                    {"free format", "32 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s",
+                            "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s", "160 kbit/s",
+                            "192 kbit/s", "224 kbit/s", "256 kbit/s", "320 kbit/s", "384 kbit/s",
+                            "forbidden"},
+                    {"free format", "32 kbit/s", "40 kbit/s", "48 kbit/s", "56 kbit/s",
+                            "64 kbit/s", "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s",
+                            "160 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s", "320 kbit/s",
+                            "forbidden"}},
+            // SZD: MPEG2.5
+            {{"free format", "32 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s",
+                    "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s",
+                    "160 kbit/s", "176 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s",
+                    "forbidden"},
+                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
+                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
+                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
+                            "forbidden"},
+                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
+                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
+                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
+                            "forbidden"}},
+    };
+    public short checksum;
+    public int framesize;
+    public int nSlots;
     private int h_layer, h_protection_bit, h_bitrate_index,
             h_padding_bit, h_mode_extension;
     private int h_version;
@@ -67,20 +134,14 @@ public final class Header {
     private int h_number_of_subbands, h_intensity_stereo_bound;
     private boolean h_copyright, h_original;
     // VBR support added by E.B
-    private double[] h_vbr_time_per_frame = {-1, 384, 1152, 1152};
+    private final double[] h_vbr_time_per_frame = {-1, 384, 1152, 1152};
     private boolean h_vbr;
     private int h_vbr_frames;
     private int h_vbr_scale;
     private int h_vbr_bytes;
     private byte[] h_vbr_toc;
-
     private byte syncmode = Bitstream.INITIAL_SYNC;
     private Crc16 crc;
-
-    public short checksum;
-    public int framesize;
-    public int nSlots;
-
     private int _headerstring = -1; // E.B
 
     Header() {
@@ -106,6 +167,8 @@ public final class Header {
         String s = buffer.toString();
         return s;
     }
+
+    // Functions to query header contents:
 
     /**
      * Read a 32-bit header from the bitstream.
@@ -227,7 +290,7 @@ public final class Header {
     void parseVBR(byte[] firstframe) throws BitstreamException {
         // Trying Xing header.
         String xing = "Xing";
-        byte tmp[] = new byte[4];
+        byte[] tmp = new byte[4];
         int offset = 0;
         // Compute "Xing" offset depending on MPEG version and channels.
         if (h_version == MPEG1) {
@@ -250,7 +313,7 @@ public final class Header {
 
                 int length = 4;
                 // Read flags.
-                byte flags[] = new byte[4];
+                byte[] flags = new byte[4];
                 System.arraycopy(firstframe, offset + length, flags, 0, flags.length);
                 length += flags.length;
                 // Read number of frames (if available).
@@ -313,8 +376,6 @@ public final class Header {
         }
     }
 
-    // Functions to query header contents:
-
     /**
      * Returns version.
      */
@@ -361,8 +422,7 @@ public final class Header {
      * Returns Protection bit.
      */
     public boolean checksums() {
-        if (h_protection_bit == 0) return true;
-        else return false;
+        return h_protection_bit == 0;
     }
 
     /**
@@ -397,6 +457,8 @@ public final class Header {
         return h_vbr_scale;
     }
 
+    // Seeking and layer III stuff
+
     /**
      * Return VBR TOC.
      *
@@ -414,14 +476,11 @@ public final class Header {
         return (checksum == crc.checksum());
     }
 
-    // Seeking and layer III stuff
-
     /**
      * Returns Layer III Padding bit.
      */
     public boolean padding() {
-        if (h_padding_bit == 0) return false;
-        else return true;
+        return h_padding_bit != 0;
     }
 
     /**
@@ -431,39 +490,14 @@ public final class Header {
         return nSlots;
     }
 
+    // E.B -> private to public
+
     /**
      * Returns Mode Extension.
      */
     public int mode_extension() {
         return h_mode_extension;
     }
-
-    // E.B -> private to public
-    public static final int bitrates[][][] = {
-            {{0 /*free format*/, 32000, 48000, 56000, 64000, 80000, 96000,
-                    112000, 128000, 144000, 160000, 176000, 192000, 224000, 256000, 0},
-                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
-                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0},
-                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
-                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0}},
-
-            {{0 /*free format*/, 32000, 64000, 96000, 128000, 160000, 192000,
-                    224000, 256000, 288000, 320000, 352000, 384000, 416000, 448000, 0},
-                    {0 /*free format*/, 32000, 48000, 56000, 64000, 80000, 96000,
-                            112000, 128000, 160000, 192000, 224000, 256000, 320000, 384000, 0},
-                    {0 /*free format*/, 32000, 40000, 48000, 56000, 64000, 80000,
-                            96000, 112000, 128000, 160000, 192000, 224000, 256000, 320000, 0}},
-            // SZD: MPEG2.5
-            {{0 /*free format*/, 32000, 48000, 56000, 64000, 80000, 96000,
-                    112000, 128000, 144000, 160000, 176000, 192000, 224000, 256000, 0},
-                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
-                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0},
-                    {0 /*free format*/, 8000, 16000, 24000, 32000, 40000, 48000,
-                            56000, 64000, 80000, 96000, 112000, 128000, 144000, 160000, 0}},
-
-    };
-
-    // E.B -> private to public
 
     /**
      * Calculate Frame size.
@@ -531,7 +565,6 @@ public final class Header {
         }
     }
 
-
     /**
      * Returns ms/frame.
      *
@@ -544,7 +577,7 @@ public final class Header {
             if ((h_version == MPEG2_LSF) || (h_version == MPEG25_LSF)) tpf /= 2;
             return ((float) (tpf * 1000));
         } else {
-            float ms_per_frame_array[][] = {{8.707483f, 8.0f, 12.0f},
+            float[][] ms_per_frame_array = {{8.707483f, 8.0f, 12.0f},
                     {26.12245f, 24.0f, 36.0f},
                     {26.12245f, 24.0f, 36.0f}};
             return (ms_per_frame_array[h_layer - 1][h_sample_frequency]);
@@ -562,6 +595,8 @@ public final class Header {
         return (max_number_of_frames(streamsize) * ms_per_frame());
     }
 
+    // functions which return header informations as strings:
+
     /**
      * Returns synchronized header.
      */
@@ -569,8 +604,6 @@ public final class Header {
     {
         return _headerstring;
     }
-
-    // functions which return header informations as strings:
 
     /**
      * Return Layer version.
@@ -587,48 +620,6 @@ public final class Header {
         return null;
     }
 
-    // E.B -> private to public
-    public static final String bitrate_str[][][] = {
-            {{"free format", "32 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s",
-                    "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s",
-                    "160 kbit/s", "176 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s",
-                    "forbidden"},
-                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
-                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
-                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
-                            "forbidden"},
-                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
-                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
-                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
-                            "forbidden"}},
-
-            {{"free format", "32 kbit/s", "64 kbit/s", "96 kbit/s", "128 kbit/s",
-                    "160 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s", "288 kbit/s",
-                    "320 kbit/s", "352 kbit/s", "384 kbit/s", "416 kbit/s", "448 kbit/s",
-                    "forbidden"},
-                    {"free format", "32 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s",
-                            "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s", "160 kbit/s",
-                            "192 kbit/s", "224 kbit/s", "256 kbit/s", "320 kbit/s", "384 kbit/s",
-                            "forbidden"},
-                    {"free format", "32 kbit/s", "40 kbit/s", "48 kbit/s", "56 kbit/s",
-                            "64 kbit/s", "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s",
-                            "160 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s", "320 kbit/s",
-                            "forbidden"}},
-            // SZD: MPEG2.5
-            {{"free format", "32 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s",
-                    "80 kbit/s", "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s",
-                    "160 kbit/s", "176 kbit/s", "192 kbit/s", "224 kbit/s", "256 kbit/s",
-                    "forbidden"},
-                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
-                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
-                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
-                            "forbidden"},
-                    {"free format", "8 kbit/s", "16 kbit/s", "24 kbit/s", "32 kbit/s",
-                            "40 kbit/s", "48 kbit/s", "56 kbit/s", "64 kbit/s", "80 kbit/s",
-                            "96 kbit/s", "112 kbit/s", "128 kbit/s", "144 kbit/s", "160 kbit/s",
-                            "forbidden"}},
-    };
-
     /**
      * Return Bitrate.
      *
@@ -636,7 +627,7 @@ public final class Header {
      */
     public String bitrate_string() {
         if (h_vbr == true) {
-            return Integer.toString(bitrate() / 1000) + " kb/s";
+            return bitrate() / 1000 + " kb/s";
         } else return bitrate_str[h_version][h_layer - 1][h_bitrate_index];
     }
 
