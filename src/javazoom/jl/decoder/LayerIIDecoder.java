@@ -612,22 +612,20 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         public void read_scalefactor(Bitstream stream, Header header) {
             if (allocation != 0) {
                 switch (scfsi) {
-                    case 0:
+                    case 0 -> {
                         scalefactor1 = scalefactors[stream.get_bits(6)];
                         scalefactor2 = scalefactors[stream.get_bits(6)];
                         scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-                    case 1:
+                    }
+                    case 1 -> {
                         scalefactor1 = scalefactor2 = scalefactors[stream.get_bits(6)];
                         scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-                    case 2:
-                        scalefactor1 = scalefactor2 = scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-                    case 3:
+                    }
+                    case 2 -> scalefactor1 = scalefactor2 = scalefactor3 = scalefactors[stream.get_bits(6)];
+                    case 3 -> {
                         scalefactor1 = scalefactors[stream.get_bits(6)];
                         scalefactor2 = scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
+                    }
                 }
                 prepare_sample_reading(header, allocation, 0,
                         factor, codelength, c, d);
@@ -743,26 +741,21 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             if (allocation != 0) {
                 super.read_scalefactor(stream, header);
                 switch (channel2_scfsi) {
-                    case 0:
+                    case 0 -> {
                         channel2_scalefactor1 = scalefactors[stream.get_bits(6)];
                         channel2_scalefactor2 = scalefactors[stream.get_bits(6)];
                         channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-
-                    case 1:
+                    }
+                    case 1 -> {
                         channel2_scalefactor1 = channel2_scalefactor2 = scalefactors[stream.get_bits(6)];
                         channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-
-                    case 2:
-                        channel2_scalefactor1 = channel2_scalefactor2 =
-                                channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-
-                    case 3:
+                    }
+                    case 2 -> channel2_scalefactor1 = channel2_scalefactor2 =
+                            channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
+                    case 3 -> {
                         channel2_scalefactor1 = scalefactors[stream.get_bits(6)];
                         channel2_scalefactor2 = channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
+                    }
                 }
             }
 
@@ -880,28 +873,23 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             super.read_scalefactor(stream, header);
             if (channel2_allocation != 0) {
                 switch (channel2_scfsi) {
-                    case 0:
+                    case 0 -> {
                         channel2_scalefactor1 = scalefactors[stream.get_bits(6)];
                         channel2_scalefactor2 = scalefactors[stream.get_bits(6)];
                         channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-
-                    case 1:
+                    }
+                    case 1 -> {
                         channel2_scalefactor1 = channel2_scalefactor2 =
                                 scalefactors[stream.get_bits(6)];
                         channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-
-                    case 2:
-                        channel2_scalefactor1 = channel2_scalefactor2 =
-                                channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
-                        break;
-
-                    case 3:
+                    }
+                    case 2 -> channel2_scalefactor1 = channel2_scalefactor2 =
+                            channel2_scalefactor3 = scalefactors[stream.get_bits(6)];
+                    case 3 -> {
                         channel2_scalefactor1 = scalefactors[stream.get_bits(6)];
                         channel2_scalefactor2 = channel2_scalefactor3 =
                                 scalefactors[stream.get_bits(6)];
-                        break;
+                    }
                 }
                 prepare_sample_reading(header, channel2_allocation, 1,
                         channel2_factor, channel2_codelength, channel2_c,

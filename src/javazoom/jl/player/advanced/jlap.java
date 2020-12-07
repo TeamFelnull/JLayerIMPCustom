@@ -55,15 +55,13 @@ public class jlap {
         final AdvancedPlayer player = new AdvancedPlayer(is);
         player.setPlayBackListener(listener);
         // run in new thread
-        new Thread() {
-            public void run() {
-                try {
-                    player.play(start, end);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage());
-                }
+        new Thread(() -> {
+            try {
+                player.play(start, end);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
             }
-        }.start();
+        }).start();
         return player;
     }
 

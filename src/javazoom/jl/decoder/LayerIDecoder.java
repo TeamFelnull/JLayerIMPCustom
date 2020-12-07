@@ -39,7 +39,7 @@ class LayerIDecoder implements FrameDecoder {
 
     protected int num_subbands;
     protected Subband[] subbands;
-    protected Crc16 crc = null;    // new Crc16[1] to enable CRC checking.
+    protected Crc16 crc;    // new Crc16[1] to enable CRC checking.
 
     public LayerIDecoder() {
         crc = new Crc16();
@@ -342,7 +342,7 @@ class LayerIDecoder implements FrameDecoder {
         /**
          *
          */
-        public void read_allocation(Bitstream stream, Header header, Crc16 crc) throws DecoderException {
+        public void read_allocation(Bitstream stream, Header header, Crc16 crc) {
             allocation = stream.get_bits(4);
             channel2_allocation = stream.get_bits(4);
             if (crc != null) {

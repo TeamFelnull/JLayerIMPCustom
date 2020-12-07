@@ -380,17 +380,12 @@ final class huffcodetab {
             {0, 15},
     };
     private static final int[] bitbuf = new int[32];
-    private char tablename0 = ' ';      /* string, containing table_description   */
-    private char tablename1 = ' ';      /* string, containing table_description   */
-    private char tablename2 = ' ';      /* string, containing table_description   */
+    private char tablename0;      /* string, containing table_description   */
+    private char tablename1;      /* string, containing table_description   */
     private final int xlen;                    /* max. x-index+                          */
     private final int ylen;                    /* max. y-index+				          */
     private final int linbits;                /* number of linbits   	                  */
-    private final int linmax;                /* max number to be stored in linbits	  */
-    private final int ref;                    /* a positive value indicates a reference */
-    private int[] table = null;            /* pointer to array[xlen][ylen]		      */
-    private int[] hlen = null;             /* pointer to array[xlen][ylen]		      */
-    private int[][] val = null;                /* decoder tree		    	              */
+    private int[][] val;                /* decoder tree		    	              */
     private final int treelen;                /* length of decoder tree  	              */
 
     /**
@@ -400,14 +395,15 @@ final class huffcodetab {
                         int[] TABLE, int[] HLEN, int[][] VAL, int TREELEN) {
         tablename0 = S.charAt(0);
         tablename1 = S.charAt(1);
-        tablename2 = S.charAt(2);
+        /* string, containing table_description   */
+        char tablename2 = S.charAt(2);
         xlen = XLEN;
         ylen = YLEN;
         linbits = LINBITS;
-        linmax = LINMAX;
-        ref = REF;
-        table = TABLE;
-        hlen = HLEN;
+        /* max number to be stored in linbits	  */
+        /* a positive value indicates a reference */
+        /* pointer to array[xlen][ylen]		      */
+        /* pointer to array[xlen][ylen]		      */
         val = VAL;
         treelen = TREELEN;
     }
@@ -496,8 +492,6 @@ final class huffcodetab {
                 if (br.hget1bit() != 0) w[0] = -w[0];
             if (x[0] != 0)
                 if (br.hget1bit() != 0) x[0] = -x[0];
-            if (y[0] != 0)
-                if (br.hget1bit() != 0) y[0] = -y[0];
         } else {
             // Process sign and escape encodings for dual tables.
             // x and y are reversed in the test bitstream.
@@ -511,9 +505,9 @@ final class huffcodetab {
             if (h.linbits != 0)
                 if ((h.ylen - 1) == y[0])
                     y[0] += br.hgetbits(h.linbits);
-            if (y[0] != 0)
-                if (br.hget1bit() != 0) y[0] = -y[0];
         }
+        if (y[0] != 0)
+            if (br.hget1bit() != 0) y[0] = -y[0];
         return error;
     }
 

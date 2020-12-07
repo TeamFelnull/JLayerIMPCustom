@@ -51,7 +51,7 @@ public class WaveFileObuffer extends Obuffer {
      * @param number_of_channels The number of channels of audio data
      *                           this buffer will receive.
      * @param freq               The sample frequency of the samples in the buffer.
-     * @param fileName           The filename to write the data to.
+     * @param FileName           The filename to write the data to.
      */
     public WaveFileObuffer(int number_of_channels, int freq, String FileName) {
         if (FileName == null)

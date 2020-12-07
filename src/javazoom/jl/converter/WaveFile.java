@@ -33,7 +33,7 @@ public class WaveFile extends RiffFile {
     private final WaveFormat_Chunk wave_format;
     private final RiffChunkHeader pcm_data;
     private long pcm_data_offset = 0;  // offset of 'pcm_data' in output file
-    private int num_samples = 0;
+    private int num_samples ;
     /**
      * Constructs a new WaveFile instance.
      */
@@ -436,7 +436,7 @@ public class WaveFile extends RiffFile {
     }
 
     class WaveFormat_ChunkData {
-        public short wFormatTag = 0;       // Format category (PCM=1)
+        public short wFormatTag ;       // Format category (PCM=1)
         public short nChannels = 0;        // Number of channels (mono=1, stereo=2)
         public int nSamplesPerSec = 0;   // Sampling rate [Hz]
         public int nAvgBytesPerSec = 0;

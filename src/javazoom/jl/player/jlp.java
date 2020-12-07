@@ -55,14 +55,14 @@ public class jlp {
             if (player != null)
                 player.play();
         } catch (Exception ex) {
-            System.err.println(ex);
+            ex.printStackTrace();
             ex.printStackTrace(System.err);
             retval = 1;
         }
         System.exit(retval);
     }
 
-    static public jlp createInstance(String[] args) {
+    public static jlp createInstance(String[] args) {
         jlp player = new jlp();
         if (!player.parseArgs(args))
             player = null;
@@ -105,14 +105,12 @@ public class jlp {
             throws JavaLayerException {
         try {
             System.out.println("playing " + fFilename + "...");
-            InputStream in = null;
-            if (remote == true) in = getURLInputStream();
+            InputStream in;
+            if (remote) in = getURLInputStream();
             else in = getInputStream();
             AudioDevice dev = getAudioDevice();
             Player player = new Player(in, dev);
             player.play();
-        } catch (IOException ex) {
-            throw new JavaLayerException("Problem playing file " + fFilename, ex);
         } catch (Exception ex) {
             throw new JavaLayerException("Problem playing file " + fFilename, ex);
         }
@@ -126,8 +124,7 @@ public class jlp {
 
         URL url = new URL(fFilename);
         InputStream fin = url.openStream();
-        BufferedInputStream bin = new BufferedInputStream(fin);
-        return bin;
+        return new BufferedInputStream(fin);
     }
 
     /**
@@ -136,8 +133,7 @@ public class jlp {
     protected InputStream getInputStream()
             throws IOException {
         FileInputStream fin = new FileInputStream(fFilename);
-        BufferedInputStream bin = new BufferedInputStream(fin);
-        return bin;
+        return new BufferedInputStream(fin);
     }
 
     protected AudioDevice getAudioDevice()

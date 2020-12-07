@@ -50,7 +50,7 @@ public class BitstreamException extends JavaLayerException
         this.errorcode = errorcode;
     }
 
-    static public String getErrorString(int errorcode) {
+    public static String getErrorString(int errorcode) {
         // REVIEW: use resource bundle to map error codes
         // to locale-sensitive strings.
 

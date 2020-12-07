@@ -281,7 +281,6 @@ final class LayerIIIDecoder implements FrameDecoder {
     private final int which_channels;
     private BitReserve br;
     private final III_side_info_t si;
-    private final temporaire2[] III_scalefac_t;
     private final temporaire2[] scalefac;
     private final int max_gr;
     private int frame_start;
@@ -298,7 +297,6 @@ final class LayerIIIDecoder implements FrameDecoder {
     // SynthesisFilter in one go.
     private final float[] samples1 = new float[32];
     private final float[] samples2 = new float[32];
-    private int counter = 0;
     private final SBI[] sfBandIndex; // Init in the constructor.
 
     /**
@@ -319,7 +317,7 @@ final class LayerIIIDecoder implements FrameDecoder {
         nonzero = new int[2];
 
         //III_scalefact_t
-        III_scalefac_t = new temporaire2[2];
+        temporaire2[] III_scalefac_t = new temporaire2[2];
         III_scalefac_t[0] = new temporaire2();
         III_scalefac_t[1] = new temporaire2();
         scalefac = III_scalefac_t;
@@ -393,20 +391,12 @@ final class LayerIIIDecoder implements FrameDecoder {
 
         if (channels == 2) {
             switch (which_channels) {
-                case OutputChannels.LEFT_CHANNEL:
-                case OutputChannels.DOWNMIX_CHANNELS:
-                    first_channel = last_channel = 0;
-                    break;
-
-                case OutputChannels.RIGHT_CHANNEL:
-                    first_channel = last_channel = 1;
-                    break;
-
-                case OutputChannels.BOTH_CHANNELS:
-                default:
+                case OutputChannels.LEFT_CHANNEL, OutputChannels.DOWNMIX_CHANNELS -> first_channel = last_channel = 0;
+                case OutputChannels.RIGHT_CHANNEL -> first_channel = last_channel = 1;
+                default -> {
                     first_channel = 0;
                     last_channel = 1;
-                    break;
+                }
             }
         } else {
             first_channel = last_channel = 0;
@@ -585,7 +575,6 @@ final class LayerIIIDecoder implements FrameDecoder {
         // System.out.println("Counter = ................................."+counter);
         //if (counter <  609)
         //{
-        counter++;
         buffer.write_buffer(1);
         //}
         //else if (counter == 609)
@@ -1068,10 +1057,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
         // Zero out rest
 
-        if (index < 576)
-            nonzero[ch] = index;
-        else
-            nonzero[ch] = 576;
+        nonzero[ch] = Math.min(index, 576);
 
         if (index < 0) index = 0;
 
@@ -1107,7 +1093,6 @@ final class LayerIIIDecoder implements FrameDecoder {
         int cb_width = 0;
         int index = 0, t_index, j;
         float g_gain;
-        float[][] xr_1d = xr;
 
         // choose correct scalefactor band per block type, initalize boundary
 
@@ -1131,19 +1116,19 @@ final class LayerIIIDecoder implements FrameDecoder {
             // Modif E.B 02/22/99
             int reste = j % SSLIMIT;
             int quotien = (j - reste) / SSLIMIT;
-            if (is_1d[j] == 0) xr_1d[quotien][reste] = 0.0f;
+            if (is_1d[j] == 0) xr[quotien][reste] = 0.0f;
             else {
                 int abv = is_1d[j];
                 // Pow Array fix (11/17/04)
                 if (abv < t_43.length) {
-                    if (is_1d[j] > 0) xr_1d[quotien][reste] = g_gain * t_43[abv];
+                    if (is_1d[j] > 0) xr[quotien][reste] = g_gain * t_43[abv];
                     else {
-                        if (-abv < t_43.length) xr_1d[quotien][reste] = -g_gain * t_43[-abv];
-                        else xr_1d[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
+                        if (-abv < t_43.length) xr[quotien][reste] = -g_gain * t_43[-abv];
+                        else xr[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
                     }
                 } else {
-                    if (is_1d[j] > 0) xr_1d[quotien][reste] = g_gain * (float) Math.pow(abv, d43);
-                    else xr_1d[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
+                    if (is_1d[j] > 0) xr[quotien][reste] = g_gain * (float) Math.pow(abv, d43);
+                    else xr[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
                 }
             }
         }
@@ -1206,9 +1191,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             // Do long/short dependent scaling operations
 
-            if ((gr_info.window_switching_flag != 0) &&
-                    (((gr_info.block_type == 2) && (gr_info.mixed_block_flag == 0)) ||
-                            ((gr_info.block_type == 2) && (gr_info.mixed_block_flag != 0) && (j >= 36)))) {
+            if (gr_info.window_switching_flag != 0 && (gr_info.block_type == 2 && gr_info.mixed_block_flag == 0 || gr_info.block_type == 2 && j >= 36)) {
 
                 t_index = (index - cb_begin) / cb_width;
 	/*            xr[sb][ss] *= pow(2.0, ((-2.0 * gr_info.subblock_gain[t_index])
@@ -1218,7 +1201,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                         << gr_info.scalefac_scale;
                 idx += (gr_info.subblock_gain[t_index] << 2);
 
-                xr_1d[quotien][reste] *= two_to_negative_half_pow[idx];
+                xr[quotien][reste] *= two_to_negative_half_pow[idx];
 
             } else {   // LONG block types 0,1,3 & 1st 2 subbands of switched blocks
 	/*				xr[sb][ss] *= pow(2.0, -0.5 * (1.0+gr_info.scalefac_scale)
@@ -1230,7 +1213,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                     idx += pretab[cb];
 
                 idx = idx << gr_info.scalefac_scale;
-                xr_1d[quotien][reste] *= two_to_negative_half_pow[idx];
+                xr[quotien][reste] *= two_to_negative_half_pow[idx];
             }
             index++;
         }
@@ -1241,10 +1224,9 @@ final class LayerIIIDecoder implements FrameDecoder {
             int quotien = (j - reste) / SSLIMIT;
             if (reste < 0) reste = 0;
             if (quotien < 0) quotien = 0;
-            xr_1d[quotien][reste] = 0.0f;
+            xr[quotien][reste] = 0.0f;
         }
 
-        return;
     }
 
     /**
@@ -1256,7 +1238,6 @@ final class LayerIIIDecoder implements FrameDecoder {
         int index;
         int sfb, sfb_start, sfb_lines;
         int src_line, des_line;
-        float[][] xr_1d = xr;
 
         if ((gr_info.window_switching_flag != 0) && (gr_info.block_type == 2)) {
 
@@ -1269,7 +1250,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                     // Modif E.B 02/22/99
                     int reste = index % SSLIMIT;
                     int quotien = (index - reste) / SSLIMIT;
-                    out_1d[index] = xr_1d[quotien][reste];
+                    out_1d[index] = xr[quotien][reste];
                 }
                 // REORDERING FOR REST SWITCHED SHORT
 				/*for( sfb=3,sfb_start=sfBandIndex[sfreq].s[3],
@@ -1293,21 +1274,21 @@ final class LayerIIIDecoder implements FrameDecoder {
                         int reste = src_line % SSLIMIT;
                         int quotien = (src_line - reste) / SSLIMIT;
 
-                        out_1d[des_line] = xr_1d[quotien][reste];
+                        out_1d[des_line] = xr[quotien][reste];
                         src_line += sfb_lines;
                         des_line++;
 
                         reste = src_line % SSLIMIT;
                         quotien = (src_line - reste) / SSLIMIT;
 
-                        out_1d[des_line] = xr_1d[quotien][reste];
+                        out_1d[des_line] = xr[quotien][reste];
                         src_line += sfb_lines;
                         des_line++;
 
                         reste = src_line % SSLIMIT;
                         quotien = (src_line - reste) / SSLIMIT;
 
-                        out_1d[des_line] = xr_1d[quotien][reste];
+                        out_1d[des_line] = xr[quotien][reste];
                     }
                 }
 
@@ -1316,7 +1297,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                     int j = reorder_table[sfreq][index];
                     int reste = j % SSLIMIT;
                     int quotien = (j - reste) / SSLIMIT;
-                    out_1d[index] = xr_1d[quotien][reste];
+                    out_1d[index] = xr[quotien][reste];
                 }
             }
         } else {   // long blocks
@@ -1324,7 +1305,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                 // Modif E.B 02/22/99
                 int reste = index % SSLIMIT;
                 int quotien = (index - reste) / SSLIMIT;
-                out_1d[index] = xr_1d[quotien][reste];
+                out_1d[index] = xr[quotien][reste];
             }
         }
     }
@@ -1618,7 +1599,7 @@ final class LayerIIIDecoder implements FrameDecoder {
         // with 8 butterflies between each pair
 
         if ((gr_info.window_switching_flag != 0) && (gr_info.block_type == 2) &&
-                !(gr_info.mixed_block_flag != 0))
+                gr_info.mixed_block_flag == 0)
             return;
 
         if ((gr_info.window_switching_flag != 0) && (gr_info.mixed_block_flag != 0) &&
@@ -1654,21 +1635,19 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             tsOut = out_1d;
             // Modif E.B 02/22/99
-            for (int cc = 0; cc < 18; cc++)
-                tsOutCopy[cc] = tsOut[cc + sb18];
+            System.arraycopy(tsOut, sb18, tsOutCopy, 0, 18);
 
             inv_mdct(tsOutCopy, rawout, bt);
 
 
-            for (int cc = 0; cc < 18; cc++)
-                tsOut[cc + sb18] = tsOutCopy[cc];
+            System.arraycopy(tsOutCopy, 0, tsOut, sb18, 18);
             // Fin Modif
 
             // overlap addition
             prvblk = prevblck;
 
-            tsOut[0 + sb18] = rawout[0] + prvblk[ch][sb18 + 0];
-            prvblk[ch][sb18 + 0] = rawout[18];
+            tsOut[sb18] = rawout[0] + prvblk[ch][sb18];
+            prvblk[ch][sb18] = rawout[18];
             tsOut[1 + sb18] = rawout[1] + prvblk[ch][sb18 + 1];
             prvblk[ch][sb18 + 1] = rawout[19];
             tsOut[2 + sb18] = rawout[2] + prvblk[ch][sb18 + 2];
@@ -1794,7 +1773,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                 in[12 + i] += in[9 + i];
                 in[9 + i] += in[6 + i];
                 in[6 + i] += in[3 + i];
-                in[3 + i] += in[0 + i];
+                in[3 + i] += in[i];
 
                 // Input aliasing on odd indices (for 6 point IDCT)
                 in[15 + i] += in[9 + i];
@@ -1804,8 +1783,8 @@ final class LayerIIIDecoder implements FrameDecoder {
                 float pp1, pp2, sum;
                 pp2 = in[12 + i] * 0.500000000f;
                 pp1 = in[6 + i] * 0.866025403f;
-                sum = in[0 + i] + pp2;
-                tmpf_1 = in[0 + i] - in[12 + i];
+                sum = in[i] + pp2;
+                tmpf_1 = in[i] - in[12 + i];
                 tmpf_0 = sum + pp1;
                 tmpf_2 = sum - pp1;
 
@@ -1948,14 +1927,14 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             // 9 point IDCT on odd indices
             // 5 points on odd indices (not realy an IDCT)
-            float i0 = in[0 + 1] + in[0 + 1];
+            float i0 = in[1] + in[1];
             float i0p12 = i0 + in[12 + 1];
 
             tmp0o = i0p12 + in[4 + 1] * 1.8793852415718f + in[8 + 1] * 1.532088886238f + in[16 + 1] * 0.34729635533386f;
             tmp1o = i0 + in[4 + 1] - in[8 + 1] - in[12 + 1] - in[12 + 1] - in[16 + 1];
             tmp2o = i0p12 - in[4 + 1] * 0.34729635533386f - in[8 + 1] * 1.8793852415718f + in[16 + 1] * 1.532088886238f;
             tmp3o = i0p12 - in[4 + 1] * 1.532088886238f + in[8 + 1] * 0.34729635533386f - in[16 + 1] * 1.8793852415718f;
-            tmp4o = (in[0 + 1] - in[4 + 1] + in[8 + 1] - in[12 + 1] + in[16 + 1]) * 0.707106781f; // Twiddled
+            tmp4o = (in[1] - in[4 + 1] + in[8 + 1] - in[12 + 1] + in[16 + 1]) * 0.707106781f; // Twiddled
 
             // 4 points on even indices
             float i6_ = in[6 + 1] * 1.732050808f;        // Sqrt[3]

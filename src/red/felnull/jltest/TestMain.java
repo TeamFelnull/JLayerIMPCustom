@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 
 public class TestMain {
     public static void main(String[] args) throws JavaLayerException, FileNotFoundException {
-        Player player = new Player(new BufferedInputStream(new FileInputStream("C:\\Users\\MORI\\Music\\playlist\\01 茜空.mp3")));
+        Player player = new Player(new BufferedInputStream(new FileInputStream("C:\\Users\\MORI\\Music\\playlist\\Snake Eater.mp3")));
         player.play();
     }
 }

@@ -36,7 +36,7 @@ import java.net.URL;
  * @since 0.0.8
  */
 public class PlayerApplet extends Applet implements Runnable {
-    static public final String AUDIO_PARAMETER = "audioURL";
+    public static final String AUDIO_PARAMETER = "audioURL";
 
     /**
      * The Player used to play the MPEG audio file.
@@ -77,7 +77,7 @@ public class PlayerApplet extends Applet implements Runnable {
             if (url != null)
                 in = url.openStream();
         } catch (IOException ex) {
-            System.err.println(ex);
+            ex.printStackTrace();
         }
         return in;
     }
@@ -97,7 +97,7 @@ public class PlayerApplet extends Applet implements Runnable {
             try {
                 url = new URL(getDocumentBase(), urlString);
             } catch (Exception ex) {
-                System.err.println(ex);
+                ex.printStackTrace();
             }
         }
         return url;
@@ -187,7 +187,7 @@ public class PlayerApplet extends Applet implements Runnable {
         try {
             stopPlayer();
         } catch (JavaLayerException ex) {
-            System.err.println(ex);
+            ex.printStackTrace();
         }
     }
 

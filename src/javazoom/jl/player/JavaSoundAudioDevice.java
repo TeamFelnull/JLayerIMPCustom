@@ -62,11 +62,10 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
     protected DataLine.Info getSourceLineInfo() {
         AudioFormat fmt = getAudioFormat();
         //DataLine.Info info = new DataLine.Info(SourceDataLine.class, fmt, 4000);
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, fmt);
-        return info;
+        return new DataLine.Info(SourceDataLine.class, fmt);
     }
 
-    public void open(AudioFormat fmt) throws JavaLayerException {
+    public void open(AudioFormat fmt) {
         if (!isOpen()) {
             setAudioFormat(fmt);
             openImpl();
@@ -74,8 +73,7 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
         }
     }
 
-    protected void openImpl()
-            throws JavaLayerException {
+    protected void openImpl() {
     }
 
 
@@ -97,11 +95,7 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
                 source.start();
 
             }
-        } catch (RuntimeException ex) {
-            t = ex;
-        } catch (LinkageError ex) {
-            t = ex;
-        } catch (LineUnavailableException ex) {
+        } catch (RuntimeException | LinkageError | LineUnavailableException ex) {
             t = ex;
         }
         if (source == null) throw new JavaLayerException("cannot obtain source audio line", t);

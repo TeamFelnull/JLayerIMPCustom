@@ -135,7 +135,7 @@ public class Player {
             lastPosition = out.getPosition();
             try {
                 bitstream.close();
-            } catch (BitstreamException ex) {
+            } catch (BitstreamException ignored) {
             }
         }
     }

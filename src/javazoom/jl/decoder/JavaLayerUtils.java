@@ -38,7 +38,7 @@ public class JavaLayerUtils {
      * @param in  The input stream to deserialize an object from.
      * @param cls The expected class of the deserialized object.
      */
-    static public Object deserialize(InputStream in, Class cls)
+    public static Object deserialize(InputStream in, Class cls)
             throws IOException {
         if (cls == null)
             throw new NullPointerException("cls");
@@ -64,7 +64,7 @@ public class JavaLayerUtils {
      *                     from the stream.
      * @see java.io.ObjectInputStream
      */
-    static public Object deserialize(InputStream in)
+    public static Object deserialize(InputStream in)
             throws IOException {
         if (in == null)
             throw new NullPointerException("in");
@@ -92,7 +92,7 @@ public class JavaLayerUtils {
      * @param length   The expected length of the array, or -1 if
      *                 any length is expected.
      */
-    static public Object deserializeArray(InputStream in, Class elemType, int length)
+    public static Object deserializeArray(InputStream in, Class elemType, int length)
             throws IOException {
         if (elemType == null)
             throw new NullPointerException("elemType");
@@ -121,18 +121,16 @@ public class JavaLayerUtils {
         return obj;
     }
 
-    static public Object deserializeArrayResource(String name, Class elemType, int length)
+    public static Object deserializeArrayResource(String name, Class elemType, int length)
             throws IOException {
         InputStream str = getResourceAsStream(name);
         if (str == null)
             throw new IOException("unable to load resource '" + name + "'");
 
-        Object obj = deserializeArray(str, elemType, length);
-
-        return obj;
+        return deserializeArray(str, elemType, length);
     }
 
-    static public void serialize(OutputStream out, Object obj)
+    public static void serialize(OutputStream out, Object obj)
             throws IOException {
         if (out == null)
             throw new NullPointerException("out");
@@ -167,7 +165,7 @@ public class JavaLayerUtils {
      * to retrieve the resource.
      */
     static synchronized public InputStream getResourceAsStream(String name) {
-        InputStream is = null;
+        InputStream is;
 
         if (hook != null) {
             is = hook.getResourceAsStream(name);

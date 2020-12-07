@@ -65,9 +65,9 @@ public abstract class AudioDeviceFactory {
             throws ClassNotFoundException,
             IllegalAccessException,
             InstantiationException {
-        AudioDevice dev = null;
+        AudioDevice dev;
 
-        Class cls = null;
+        Class cls;
         if (loader == null) {
             cls = Class.forName(name);
         } else {

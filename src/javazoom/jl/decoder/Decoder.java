@@ -64,8 +64,6 @@ public class Decoder implements DecoderErrors {
 
     private final Equalizer equalizer = new Equalizer();
 
-    private final Params params;
-
     private boolean initialized;
 
 
@@ -82,14 +80,14 @@ public class Decoder implements DecoderErrors {
      * Creates a new <code>Decoder</code> instance with default
      * parameters.
      *
-     * @param params The <code>Params</code> instance that describes
+     * @param params0 The <code>Params</code> instance that describes
      *               the customizable aspects of the decoder.
      */
     public Decoder(Params params0) {
         if (params0 == null)
             params0 = DEFAULT_PARAMS;
 
-        params = params0;
+        Params params = params0;
 
         Equalizer eq = params.getInitialEqualizerSettings();
         if (eq != null) {
@@ -97,7 +95,7 @@ public class Decoder implements DecoderErrors {
         }
     }
 
-    static public Params getDefaultParams() {
+    public static Params getDefaultParams() {
         return (Params) DEFAULT_PARAMS.clone();
     }
 
@@ -120,7 +118,7 @@ public class Decoder implements DecoderErrors {
      * Decodes one frame from an MPEG audio bitstream.
      *
      * @param header    The header describing the frame to decode.
-     * @param bitstream The bistream that provides the bits for te body of the frame.
+     * @param stream The bistream that provides the bits for te body of the frame.
      * @return A SampleBuffer containing the decoded samples.
      */
     public Obuffer decodeFrame(Header header, Bitstream stream)
@@ -155,8 +153,6 @@ public class Decoder implements DecoderErrors {
      * by this decoder. This typically corresponds to the sample
      * rate encoded in the MPEG audio stream.
      *
-     * @param the sample rate (in Hz) of the samples written to the
-     *            output buffer when decoding.
      */
     public int getOutputFrequency() {
         return outputFrequency;
@@ -205,16 +201,15 @@ public class Decoder implements DecoderErrors {
         // REVIEW: allow channel output selection type
         // (LEFT, RIGHT, BOTH, DOWNMIX)
         switch (layer) {
-            case 3:
+            case 3 -> {
                 if (l3decoder == null) {
                     l3decoder = new LayerIIIDecoder(stream,
                             header, filter1, filter2,
                             output, OutputChannels.BOTH_CHANNELS);
                 }
-
                 decoder = l3decoder;
-                break;
-            case 2:
+            }
+            case 2 -> {
                 if (l2decoder == null) {
                     l2decoder = new LayerIIDecoder();
                     l2decoder.create(stream,
@@ -222,8 +217,8 @@ public class Decoder implements DecoderErrors {
                             output, OutputChannels.BOTH_CHANNELS);
                 }
                 decoder = l2decoder;
-                break;
-            case 1:
+            }
+            case 1 -> {
                 if (l1decoder == null) {
                     l1decoder = new LayerIDecoder();
                     l1decoder.create(stream,
@@ -231,7 +226,7 @@ public class Decoder implements DecoderErrors {
                             output, OutputChannels.BOTH_CHANNELS);
                 }
                 decoder = l1decoder;
-                break;
+            }
         }
 
         if (decoder == null) {
@@ -241,8 +236,7 @@ public class Decoder implements DecoderErrors {
         return decoder;
     }
 
-    private void initialize(Header header)
-            throws DecoderException {
+    private void initialize(Header header) {
 
         // REVIEW: allow customizable scale factor
         float scalefactor = 32700.0f;

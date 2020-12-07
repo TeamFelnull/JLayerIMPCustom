@@ -204,9 +204,7 @@ final class SynthesisFilter {
             len = 0;
 
         float[] subarray = new float[len];
-        for (int i = 0; i < len; i++) {
-            subarray[i] = array[offs + i];
-        }
+        System.arraycopy(array, offs, subarray, 0, len);
 
         return subarray;
     }
@@ -544,7 +542,7 @@ final class SynthesisFilter {
 
         int pos = actual_write_pos;
 
-        dest[0 + pos] = new_v0;
+        dest[pos] = new_v0;
         dest[16 + pos] = new_v1;
         dest[32 + pos] = new_v2;
         dest[48 + pos] = new_v3;
@@ -584,7 +582,7 @@ final class SynthesisFilter {
         // insert V[32] (== -new_v[0]) into other v:
         dest = (actual_v == v1) ? v2 : v1;
 
-        dest[0 + pos] = -new_v0;
+        dest[pos] = -new_v0;
         // insert V[33-48] (== new_v[16-31]) into other v:
         dest[16 + pos] = new_v16;
         dest[32 + pos] = new_v17;
@@ -899,7 +897,7 @@ final class SynthesisFilter {
         // float[] x2 = actual_v + actual_write_pos;
         float[] dest = actual_v;
 
-        dest[0 + actual_write_pos] = x1[0];
+        dest[actual_write_pos] = x1[0];
         dest[16 + actual_write_pos] = x1[1];
         dest[32 + actual_write_pos] = x1[2];
         dest[48 + actual_write_pos] = x1[3];
@@ -943,14 +941,13 @@ final class SynthesisFilter {
     private void compute_pcm_samples0(Obuffer buffer) {
         final float[] vp = actual_v;
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
         for (int i = 0; i < 32; i++) {
             float pcm_sample;
             final float[] dp = d16[i];
-            pcm_sample = ((vp[0 + dvp] * dp[0]) +
+            pcm_sample = ((vp[dvp] * dp[0]) +
                     (vp[15 + dvp] * dp[1]) +
                     (vp[14 + dvp] * dp[2]) +
                     (vp[13 + dvp] * dp[3]) +
@@ -968,7 +965,7 @@ final class SynthesisFilter {
                     (vp[1 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -977,7 +974,6 @@ final class SynthesisFilter {
     private void compute_pcm_samples1(Obuffer buffer) {
         final float[] vp = actual_v;
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -986,7 +982,7 @@ final class SynthesisFilter {
             float pcm_sample;
 
             pcm_sample = ((vp[1 + dvp] * dp[0]) +
-                    (vp[0 + dvp] * dp[1]) +
+                    (vp[dvp] * dp[1]) +
                     (vp[15 + dvp] * dp[2]) +
                     (vp[14 + dvp] * dp[3]) +
                     (vp[13 + dvp] * dp[4]) +
@@ -1003,7 +999,7 @@ final class SynthesisFilter {
                     (vp[2 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1013,7 +1009,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1023,7 +1018,7 @@ final class SynthesisFilter {
 
             pcm_sample = ((vp[2 + dvp] * dp[0]) +
                     (vp[1 + dvp] * dp[1]) +
-                    (vp[0 + dvp] * dp[2]) +
+                    (vp[dvp] * dp[2]) +
                     (vp[15 + dvp] * dp[3]) +
                     (vp[14 + dvp] * dp[4]) +
                     (vp[13 + dvp] * dp[5]) +
@@ -1039,7 +1034,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1050,7 +1045,6 @@ final class SynthesisFilter {
 
         int idx = 0;
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1061,7 +1055,7 @@ final class SynthesisFilter {
             pcm_sample = ((vp[3 + dvp] * dp[0]) +
                     (vp[2 + dvp] * dp[1]) +
                     (vp[1 + dvp] * dp[2]) +
-                    (vp[0 + dvp] * dp[3]) +
+                    (vp[dvp] * dp[3]) +
                     (vp[15 + dvp] * dp[4]) +
                     (vp[14 + dvp] * dp[5]) +
                     (vp[13 + dvp] * dp[6]) +
@@ -1076,7 +1070,7 @@ final class SynthesisFilter {
                     (vp[4 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1086,7 +1080,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1098,7 +1091,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[1]) +
                     (vp[2 + dvp] * dp[2]) +
                     (vp[1 + dvp] * dp[3]) +
-                    (vp[0 + dvp] * dp[4]) +
+                    (vp[dvp] * dp[4]) +
                     (vp[15 + dvp] * dp[5]) +
                     (vp[14 + dvp] * dp[6]) +
                     (vp[13 + dvp] * dp[7]) +
@@ -1112,7 +1105,7 @@ final class SynthesisFilter {
                     (vp[5 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1122,7 +1115,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1135,7 +1127,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[2]) +
                     (vp[2 + dvp] * dp[3]) +
                     (vp[1 + dvp] * dp[4]) +
-                    (vp[0 + dvp] * dp[5]) +
+                    (vp[dvp] * dp[5]) +
                     (vp[15 + dvp] * dp[6]) +
                     (vp[14 + dvp] * dp[7]) +
                     (vp[13 + dvp] * dp[8]) +
@@ -1148,7 +1140,7 @@ final class SynthesisFilter {
                     (vp[6 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1157,7 +1149,6 @@ final class SynthesisFilter {
     private void compute_pcm_samples6(Obuffer buffer) {
         final float[] vp = actual_v;
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1171,7 +1162,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[3]) +
                     (vp[2 + dvp] * dp[4]) +
                     (vp[1 + dvp] * dp[5]) +
-                    (vp[0 + dvp] * dp[6]) +
+                    (vp[dvp] * dp[6]) +
                     (vp[15 + dvp] * dp[7]) +
                     (vp[14 + dvp] * dp[8]) +
                     (vp[13 + dvp] * dp[9]) +
@@ -1183,7 +1174,7 @@ final class SynthesisFilter {
                     (vp[7 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1193,7 +1184,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1208,7 +1198,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[4]) +
                     (vp[2 + dvp] * dp[5]) +
                     (vp[1 + dvp] * dp[6]) +
-                    (vp[0 + dvp] * dp[7]) +
+                    (vp[dvp] * dp[7]) +
                     (vp[15 + dvp] * dp[8]) +
                     (vp[14 + dvp] * dp[9]) +
                     (vp[13 + dvp] * dp[10]) +
@@ -1219,7 +1209,7 @@ final class SynthesisFilter {
                     (vp[8 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1229,7 +1219,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1245,7 +1234,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[5]) +
                     (vp[2 + dvp] * dp[6]) +
                     (vp[1 + dvp] * dp[7]) +
-                    (vp[0 + dvp] * dp[8]) +
+                    (vp[dvp] * dp[8]) +
                     (vp[15 + dvp] * dp[9]) +
                     (vp[14 + dvp] * dp[10]) +
                     (vp[13 + dvp] * dp[11]) +
@@ -1255,7 +1244,7 @@ final class SynthesisFilter {
                     (vp[9 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1265,7 +1254,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1282,7 +1270,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[6]) +
                     (vp[2 + dvp] * dp[7]) +
                     (vp[1 + dvp] * dp[8]) +
-                    (vp[0 + dvp] * dp[9]) +
+                    (vp[dvp] * dp[9]) +
                     (vp[15 + dvp] * dp[10]) +
                     (vp[14 + dvp] * dp[11]) +
                     (vp[13 + dvp] * dp[12]) +
@@ -1291,7 +1279,7 @@ final class SynthesisFilter {
                     (vp[10 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1300,7 +1288,6 @@ final class SynthesisFilter {
     private void compute_pcm_samples10(Obuffer buffer) {
         final float[] vp = actual_v;
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1318,7 +1305,7 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[7]) +
                     (vp[2 + dvp] * dp[8]) +
                     (vp[1 + dvp] * dp[9]) +
-                    (vp[0 + dvp] * dp[10]) +
+                    (vp[dvp] * dp[10]) +
                     (vp[15 + dvp] * dp[11]) +
                     (vp[14 + dvp] * dp[12]) +
                     (vp[13 + dvp] * dp[13]) +
@@ -1326,7 +1313,7 @@ final class SynthesisFilter {
                     (vp[11 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1336,7 +1323,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1355,14 +1341,14 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[8]) +
                     (vp[2 + dvp] * dp[9]) +
                     (vp[1 + dvp] * dp[10]) +
-                    (vp[0 + dvp] * dp[11]) +
+                    (vp[dvp] * dp[11]) +
                     (vp[15 + dvp] * dp[12]) +
                     (vp[14 + dvp] * dp[13]) +
                     (vp[13 + dvp] * dp[14]) +
                     (vp[12 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1371,7 +1357,6 @@ final class SynthesisFilter {
     private void compute_pcm_samples12(Obuffer buffer) {
         final float[] vp = actual_v;
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1391,13 +1376,13 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[9]) +
                     (vp[2 + dvp] * dp[10]) +
                     (vp[1 + dvp] * dp[11]) +
-                    (vp[0 + dvp] * dp[12]) +
+                    (vp[dvp] * dp[12]) +
                     (vp[15 + dvp] * dp[13]) +
                     (vp[14 + dvp] * dp[14]) +
                     (vp[13 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1411,7 +1396,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1432,12 +1416,12 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[10]) +
                     (vp[2 + dvp] * dp[11]) +
                     (vp[1 + dvp] * dp[12]) +
-                    (vp[0 + dvp] * dp[13]) +
+                    (vp[dvp] * dp[13]) +
                     (vp[15 + dvp] * dp[14]) +
                     (vp[14 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1447,7 +1431,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1469,11 +1452,11 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[11]) +
                     (vp[2 + dvp] * dp[12]) +
                     (vp[1 + dvp] * dp[13]) +
-                    (vp[0 + dvp] * dp[14]) +
+                    (vp[dvp] * dp[14]) +
                     (vp[15 + dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
 
             dvp += 16;
         } // for
@@ -1483,7 +1466,6 @@ final class SynthesisFilter {
         final float[] vp = actual_v;
 
         //int inc = v_inc;
-        final float[] tmpOut = _tmpOut;
         int dvp = 0;
 
         // fat chance of having this loop unroll
@@ -1505,10 +1487,10 @@ final class SynthesisFilter {
                     (vp[3 + dvp] * dp[12]) +
                     (vp[2 + dvp] * dp[13]) +
                     (vp[1 + dvp] * dp[14]) +
-                    (vp[0 + dvp] * dp[15])
+                    (vp[dvp] * dp[15])
             ) * scalefactor;
 
-            tmpOut[i] = pcm_sample;
+            _tmpOut[i] = pcm_sample;
             dvp += 16;
         } // for
     }
@@ -1516,54 +1498,22 @@ final class SynthesisFilter {
     private void compute_pcm_samples(Obuffer buffer) {
 
         switch (actual_write_pos) {
-            case 0:
-                compute_pcm_samples0(buffer);
-                break;
-            case 1:
-                compute_pcm_samples1(buffer);
-                break;
-            case 2:
-                compute_pcm_samples2(buffer);
-                break;
-            case 3:
-                compute_pcm_samples3(buffer);
-                break;
-            case 4:
-                compute_pcm_samples4(buffer);
-                break;
-            case 5:
-                compute_pcm_samples5(buffer);
-                break;
-            case 6:
-                compute_pcm_samples6(buffer);
-                break;
-            case 7:
-                compute_pcm_samples7(buffer);
-                break;
-            case 8:
-                compute_pcm_samples8(buffer);
-                break;
-            case 9:
-                compute_pcm_samples9(buffer);
-                break;
-            case 10:
-                compute_pcm_samples10(buffer);
-                break;
-            case 11:
-                compute_pcm_samples11(buffer);
-                break;
-            case 12:
-                compute_pcm_samples12(buffer);
-                break;
-            case 13:
-                compute_pcm_samples13(buffer);
-                break;
-            case 14:
-                compute_pcm_samples14(buffer);
-                break;
-            case 15:
-                compute_pcm_samples15(buffer);
-                break;
+            case 0 -> compute_pcm_samples0(buffer);
+            case 1 -> compute_pcm_samples1(buffer);
+            case 2 -> compute_pcm_samples2(buffer);
+            case 3 -> compute_pcm_samples3(buffer);
+            case 4 -> compute_pcm_samples4(buffer);
+            case 5 -> compute_pcm_samples5(buffer);
+            case 6 -> compute_pcm_samples6(buffer);
+            case 7 -> compute_pcm_samples7(buffer);
+            case 8 -> compute_pcm_samples8(buffer);
+            case 9 -> compute_pcm_samples9(buffer);
+            case 10 -> compute_pcm_samples10(buffer);
+            case 11 -> compute_pcm_samples11(buffer);
+            case 12 -> compute_pcm_samples12(buffer);
+            case 13 -> compute_pcm_samples13(buffer);
+            case 14 -> compute_pcm_samples14(buffer);
+            case 15 -> compute_pcm_samples15(buffer);
         }
 
         if (buffer != null) {
