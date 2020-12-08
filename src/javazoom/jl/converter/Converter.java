@@ -230,6 +230,8 @@ public class Converter {
          * Called when an exception is thrown during while converting
          * a frame.
          *
+         * @param t The <code>Throwable</code> instance that
+         *          was thrown.
          * @return <code>true</code> to continue processing, or false
          * to abort conversion.
          * <p>
@@ -237,8 +239,6 @@ public class Converter {
          * is propagated to the caller of the convert() method. If
          * <code>true</code> is returned, the exception is silently
          * ignored and the converter moves onto the next frame.
-         * @param    t    The <code>Throwable</code> instance that
-         * was thrown.
          */
         boolean converterException(Throwable t);
 
@@ -291,15 +291,13 @@ public class Converter {
 
         public void converterUpdate(int updateID, int param1, int param2) {
             if (isDetail(VERBOSE_DETAIL)) {
-                switch (updateID) {
-                    case UPDATE_CONVERT_COMPLETE:
-                        // catch divide by zero errors.
-                        if (param2 == 0)
-                            param2 = 1;
+                if (updateID == UPDATE_CONVERT_COMPLETE) {// catch divide by zero errors.
+                    if (param2 == 0)
+                        param2 = 1;
 
-                        pw.println();
-                        pw.println("Converted " + param2 + " frames in " + param1 + " ms (" +
-                                (param1 / param2) + " ms per frame.)");
+                    pw.println();
+                    pw.println("Converted " + param2 + " frames in " + param1 + " ms (" +
+                            (param1 / param2) + " ms per frame.)");
                 }
             }
         }

@@ -77,20 +77,21 @@ public final class Bitstream implements BitstreamErrors {
     private final Header header = new Header();
     private final byte[] syncbuf = new byte[4];
     /**
-     * Number of valid bytes in the frame buffer.
-     */
-    private int framesize;
-    /**
      * The bytes read from the stream.
      */
     private final byte[] frame_bytes = new byte[BUFFER_INT_SIZE * 4];
+    private final Crc16[] crc = new Crc16[1];
+    /**
+     * Number of valid bytes in the frame buffer.
+     */
+    private int framesize;
+    //private int 			current_frame_number;
+    //private int				last_frame_number;
     /**
      * Index into <code>framebuffer</code> where the next bits are
      * retrieved.
      */
     private int wordpointer;
-    //private int 			current_frame_number;
-    //private int				last_frame_number;
     /**
      * Number (0-31, from MSB to LSB) of next bit for get_bits()
      */
@@ -107,8 +108,6 @@ public final class Bitstream implements BitstreamErrors {
      *
      */
     private boolean single_ch_mode;
-    private final Crc16[] crc = new Crc16[1];
-
     private byte[] rawid3v2 = null;
 
     private boolean firstframe = true;
@@ -233,7 +232,7 @@ public final class Bitstream implements BitstreamErrors {
         try {
             result = readNextFrame();
             // E.B, Parse VBR (if any) first frame.
-            if (firstframe == true) {
+            if (firstframe) {
                 result.parseVBR(frame_bytes);
                 firstframe = false;
             }
@@ -313,7 +312,7 @@ public final class Bitstream implements BitstreamErrors {
      */
     public boolean isSyncCurrentPosition(int syncmode) throws BitstreamException {
         int read = readBytes(syncbuf, 0, 4);
-        int headerstring = ((syncbuf[0] << 24) & 0xFF000000) | ((syncbuf[1] << 16) & 0x00FF0000) | ((syncbuf[2] << 8) & 0x0000FF00) | ((syncbuf[3] << 0) & 0x000000FF);
+        int headerstring = ((syncbuf[0] << 24) & 0xFF000000) | ((syncbuf[1] << 16) & 0x00FF0000) | ((syncbuf[2] << 8) & 0x0000FF00) | ((syncbuf[3]) & 0x000000FF);
 
         try {
             source.unread(syncbuf, 0, read);

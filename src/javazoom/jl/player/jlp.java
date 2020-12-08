@@ -55,8 +55,7 @@ public class jlp {
             if (player != null)
                 player.play();
         } catch (Exception ex) {
-            System.err.println(ex);
-            ex.printStackTrace(System.err);
+            ex.printStackTrace();
             retval = 1;
         }
         System.exit(retval);
@@ -106,13 +105,11 @@ public class jlp {
         try {
             System.out.println("playing " + fFilename + "...");
             InputStream in = null;
-            if (remote == true) in = getURLInputStream();
+            if (remote) in = getURLInputStream();
             else in = getInputStream();
             AudioDevice dev = getAudioDevice();
             Player player = new Player(in, dev);
             player.play();
-        } catch (IOException ex) {
-            throw new JavaLayerException("Problem playing file " + fFilename, ex);
         } catch (Exception ex) {
             throw new JavaLayerException("Problem playing file " + fFilename, ex);
         }

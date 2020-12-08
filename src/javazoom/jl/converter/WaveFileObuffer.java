@@ -36,14 +36,14 @@ import javazoom.jl.decoder.Obuffer;
 
 
 public class WaveFileObuffer extends Obuffer {
-    /**
-     * Write the samples to the file (Random Acces).
-     */
-    short[] myBuffer = new short[2];
     private final short[] buffer;
     private final short[] bufferp;
     private final int channels;
     private final WaveFile outWave;
+    /**
+     * Write the samples to the file (Random Acces).
+     */
+    short[] myBuffer = new short[2];
 
     /**
      * Creates a new WareFileObuffer instance.
@@ -51,7 +51,7 @@ public class WaveFileObuffer extends Obuffer {
      * @param number_of_channels The number of channels of audio data
      *                           this buffer will receive.
      * @param freq               The sample frequency of the samples in the buffer.
-     * @param fileName           The filename to write the data to.
+     * @param FileName           The filename to write the data to.
      */
     public WaveFileObuffer(int number_of_channels, int freq, String FileName) {
         if (FileName == null)

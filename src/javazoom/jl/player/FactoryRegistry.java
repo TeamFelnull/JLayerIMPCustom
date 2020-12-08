@@ -37,7 +37,7 @@ import java.util.Hashtable;
 
 public class FactoryRegistry extends AudioDeviceFactory {
     static private FactoryRegistry instance = null;
-    protected Hashtable factories = new Hashtable();
+    protected Hashtable<Class<?>, AudioDeviceFactory> factories = new Hashtable<>();
 
     static synchronized public FactoryRegistry systemRegistry() {
         if (instance == null) {
@@ -94,9 +94,9 @@ public class FactoryRegistry extends AudioDeviceFactory {
             if (size != 0) {
                 fa = new AudioDeviceFactory[size];
                 int idx = 0;
-                Enumeration e = factories.elements();
+                Enumeration<AudioDeviceFactory> e = factories.elements();
                 while (e.hasMoreElements()) {
-                    AudioDeviceFactory factory = (AudioDeviceFactory) e.nextElement();
+                    AudioDeviceFactory factory = e.nextElement();
                     fa[idx++] = factory;
                 }
             }

@@ -239,6 +239,36 @@ final class LayerIIIDecoder implements FrameDecoder {
     // MDM: new_slen is fully initialized before use, no need
     // to reallocate array.
     private final int[] new_slen = new int[4];
+    private final int[] is_1d;
+    private final float[][][] ro;
+    private final float[][][] lr;
+    private final float[] out_1d;
+    private final float[][] prevblck;
+    private final float[][] k;
+    private final int[] nonzero;
+    private final Bitstream stream;
+    private final Header header;
+    private final SynthesisFilter filter1;
+    private final SynthesisFilter filter2;
+    private final Obuffer buffer;
+    private final int which_channels;
+    private final III_side_info_t si;
+    private final temporaire2[] III_scalefac_t;
+    private final temporaire2[] scalefac;
+    private final int max_gr;
+    private final int channels;
+    private final int first_channel;
+    private final int last_channel;
+    private final int sfreq;
+    /**
+     * Decode one frame, filling the buffer with the output samples.
+     */
+
+    // subband samples are buffered and passed to the
+    // SynthesisFilter in one go.
+    private final float[] samples1 = new float[32];
+    private final float[] samples2 = new float[32];
+    private final SBI[] sfBandIndex; // Init in the constructor.
     public int[] scalefac_buffer;
     public Sftable sftable;
     /**
@@ -266,40 +296,10 @@ final class LayerIIIDecoder implements FrameDecoder {
     // MDM: removed, as this wasn't being used.
     //private float               CheckSumOut1d = 0.0f;
     private int CheckSumHuff = 0;
-    private final int[] is_1d;
-    private final float[][][] ro;
-    private final float[][][] lr;
-    private final float[] out_1d;
-    private final float[][] prevblck;
-    private final float[][] k;
-    private final int[] nonzero;
-    private final Bitstream stream;
-    private final Header header;
-    private final SynthesisFilter filter1;
-    private final SynthesisFilter filter2;
-    private final Obuffer buffer;
-    private final int which_channels;
     private BitReserve br;
-    private final III_side_info_t si;
-    private final temporaire2[] III_scalefac_t;
-    private final temporaire2[] scalefac;
-    private final int max_gr;
     private int frame_start;
     private int part2_start;
-    private final int channels;
-    private final int first_channel;
-    private final int last_channel;
-    private final int sfreq;
-    /**
-     * Decode one frame, filling the buffer with the output samples.
-     */
-
-    // subband samples are buffered and passed to the
-    // SynthesisFilter in one go.
-    private final float[] samples1 = new float[32];
-    private final float[] samples2 = new float[32];
     private int counter = 0;
-    private final SBI[] sfBandIndex; // Init in the constructor.
 
     /**
      * Constructor.
@@ -477,7 +477,6 @@ final class LayerIIIDecoder implements FrameDecoder {
 
     /************************************************************/
     /*                            L3TABLE                       */
-
     public void decodeFrame() {
         decode();
     }
@@ -957,8 +956,6 @@ final class LayerIIIDecoder implements FrameDecoder {
                         m++;
                     }
                 }
-                for (window = 0; window < 3; window++)
-                    scalefac[ch].s[window][12] = 0;
 
             } else {  // SHORT
 
@@ -969,9 +966,9 @@ final class LayerIIIDecoder implements FrameDecoder {
                     }
                 }
 
-                for (window = 0; window < 3; window++)
-                    scalefac[ch].s[window][12] = 0;
             }
+            for (window = 0; window < 3; window++)
+                scalefac[ch].s[window][12] = 0;
         } else {   // LONG types 0,1,3
 
             for (sfb = 0; sfb < 21; sfb++) {
@@ -1068,10 +1065,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
         // Zero out rest
 
-        if (index < 576)
-            nonzero[ch] = index;
-        else
-            nonzero[ch] = 576;
+        nonzero[ch] = Math.min(index, 576);
 
         if (index < 0) index = 0;
 
@@ -1206,9 +1200,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             // Do long/short dependent scaling operations
 
-            if ((gr_info.window_switching_flag != 0) &&
-                    (((gr_info.block_type == 2) && (gr_info.mixed_block_flag == 0)) ||
-                            ((gr_info.block_type == 2) && (gr_info.mixed_block_flag != 0) && (j >= 36)))) {
+            if (gr_info.window_switching_flag != 0 && (gr_info.block_type == 2 && gr_info.mixed_block_flag == 0 || gr_info.block_type == 2 && j >= 36)) {
 
                 t_index = (index - cb_begin) / cb_width;
 	/*            xr[sb][ss] *= pow(2.0, ((-2.0 * gr_info.subblock_gain[t_index])
@@ -1244,7 +1236,6 @@ final class LayerIIIDecoder implements FrameDecoder {
             xr_1d[quotien][reste] = 0.0f;
         }
 
-        return;
     }
 
     /**
@@ -1618,7 +1609,7 @@ final class LayerIIIDecoder implements FrameDecoder {
         // with 8 butterflies between each pair
 
         if ((gr_info.window_switching_flag != 0) && (gr_info.block_type == 2) &&
-                !(gr_info.mixed_block_flag != 0))
+                gr_info.mixed_block_flag == 0)
             return;
 
         if ((gr_info.window_switching_flag != 0) && (gr_info.mixed_block_flag != 0) &&
@@ -1654,21 +1645,19 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             tsOut = out_1d;
             // Modif E.B 02/22/99
-            for (int cc = 0; cc < 18; cc++)
-                tsOutCopy[cc] = tsOut[cc + sb18];
+            System.arraycopy(tsOut, sb18, tsOutCopy, 0, 18);
 
             inv_mdct(tsOutCopy, rawout, bt);
 
 
-            for (int cc = 0; cc < 18; cc++)
-                tsOut[cc + sb18] = tsOutCopy[cc];
+            System.arraycopy(tsOutCopy, 0, tsOut, sb18, 18);
             // Fin Modif
 
             // overlap addition
             prvblk = prevblck;
 
-            tsOut[0 + sb18] = rawout[0] + prvblk[ch][sb18 + 0];
-            prvblk[ch][sb18 + 0] = rawout[18];
+            tsOut[sb18] = rawout[0] + prvblk[ch][sb18];
+            prvblk[ch][sb18] = rawout[18];
             tsOut[1 + sb18] = rawout[1] + prvblk[ch][sb18 + 1];
             prvblk[ch][sb18 + 1] = rawout[19];
             tsOut[2 + sb18] = rawout[2] + prvblk[ch][sb18 + 2];
@@ -1794,7 +1783,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                 in[12 + i] += in[9 + i];
                 in[9 + i] += in[6 + i];
                 in[6 + i] += in[3 + i];
-                in[3 + i] += in[0 + i];
+                in[3 + i] += in[i];
 
                 // Input aliasing on odd indices (for 6 point IDCT)
                 in[15 + i] += in[9 + i];
@@ -1804,8 +1793,8 @@ final class LayerIIIDecoder implements FrameDecoder {
                 float pp1, pp2, sum;
                 pp2 = in[12 + i] * 0.500000000f;
                 pp1 = in[6 + i] * 0.866025403f;
-                sum = in[0 + i] + pp2;
-                tmpf_1 = in[0 + i] - in[12 + i];
+                sum = in[i] + pp2;
+                tmpf_1 = in[i] - in[12 + i];
                 tmpf_0 = sum + pp1;
                 tmpf_2 = sum - pp1;
 
@@ -1948,14 +1937,14 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             // 9 point IDCT on odd indices
             // 5 points on odd indices (not realy an IDCT)
-            float i0 = in[0 + 1] + in[0 + 1];
+            float i0 = in[1] + in[1];
             float i0p12 = i0 + in[12 + 1];
 
             tmp0o = i0p12 + in[4 + 1] * 1.8793852415718f + in[8 + 1] * 1.532088886238f + in[16 + 1] * 0.34729635533386f;
             tmp1o = i0 + in[4 + 1] - in[8 + 1] - in[12 + 1] - in[12 + 1] - in[16 + 1];
             tmp2o = i0p12 - in[4 + 1] * 0.34729635533386f - in[8 + 1] * 1.8793852415718f + in[16 + 1] * 1.532088886238f;
             tmp3o = i0p12 - in[4 + 1] * 1.532088886238f + in[8 + 1] * 0.34729635533386f - in[16 + 1] * 1.8793852415718f;
-            tmp4o = (in[0 + 1] - in[4 + 1] + in[8 + 1] - in[12 + 1] + in[16 + 1]) * 0.707106781f; // Twiddled
+            tmp4o = (in[1] - in[4 + 1] + in[8 + 1] - in[12 + 1] + in[16 + 1]) * 0.707106781f; // Twiddled
 
             // 4 points on even indices
             float i6_ = in[6 + 1] * 1.732050808f;        // Sqrt[3]
@@ -2343,6 +2332,7 @@ final class LayerIIIDecoder implements FrameDecoder {
             gr[1] = new gr_info_s();
         }
     }
+
     /***************************************************************/
     /*                         END OF INV_MDCT                     */
 

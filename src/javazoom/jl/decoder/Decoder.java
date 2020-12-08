@@ -24,8 +24,8 @@ package javazoom.jl.decoder;
  * The <code>Decoder</code> class encapsulates the details of
  * decoding an MPEG audio frame.
  *
- * @version 0.0.7 12/12/99
  * @author MDM
+ * @version 0.0.7 12/12/99
  * @since 0.0.5
  */
 public class Decoder implements DecoderErrors {
@@ -35,37 +35,29 @@ public class Decoder implements DecoderErrors {
      * The Bistream from which the MPEG audio frames are read.
      */
     //private Bitstream				stream;
-
+    private final Equalizer equalizer = new Equalizer();
+    private final Params params;
     /**
      * The Obuffer instance that will receive the decoded
      * PCM samples.
      */
     private Obuffer output;
-
     /**
      * Synthesis filter for the left channel.
      */
     private SynthesisFilter filter1;
-
     /**
      * Sythesis filter for the right channel.
      */
     private SynthesisFilter filter2;
-
     /**
      * The decoder used to decode layer III frames.
      */
     private LayerIIIDecoder l3decoder;
     private LayerIIDecoder l2decoder;
     private LayerIDecoder l1decoder;
-
     private int outputFrequency;
     private int outputChannels;
-
-    private final Equalizer equalizer = new Equalizer();
-
-    private final Params params;
-
     private boolean initialized;
 
 
@@ -82,7 +74,7 @@ public class Decoder implements DecoderErrors {
      * Creates a new <code>Decoder</code> instance with default
      * parameters.
      *
-     * @param params The <code>Params</code> instance that describes
+     * @param params0 The <code>Params</code> instance that describes
      *               the customizable aspects of the decoder.
      */
     public Decoder(Params params0) {
@@ -120,7 +112,7 @@ public class Decoder implements DecoderErrors {
      * Decodes one frame from an MPEG audio bitstream.
      *
      * @param header    The header describing the frame to decode.
-     * @param bitstream The bistream that provides the bits for te body of the frame.
+     * @param stream The bistream that provides the bits for te body of the frame.
      * @return A SampleBuffer containing the decoded samples.
      */
     public Obuffer decodeFrame(Header header, Bitstream stream)
@@ -155,8 +147,7 @@ public class Decoder implements DecoderErrors {
      * by this decoder. This typically corresponds to the sample
      * rate encoded in the MPEG audio stream.
      *
-     * @param the sample rate (in Hz) of the samples written to the
-     *            output buffer when decoding.
+     *
      */
     public int getOutputFrequency() {
         return outputFrequency;
@@ -276,9 +267,8 @@ public class Decoder implements DecoderErrors {
      * Instances of this class are not thread safe.
      */
     public static class Params implements Cloneable {
-        private OutputChannels outputChannels = OutputChannels.BOTH;
-
         private final Equalizer equalizer = new Equalizer();
+        private OutputChannels outputChannels = OutputChannels.BOTH;
 
         public Params() {
         }

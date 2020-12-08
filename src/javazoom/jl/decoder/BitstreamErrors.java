@@ -26,8 +26,8 @@ package javazoom.jl.decoder;
  * in <code>BistreamException</code>s.
  *
  * @author MDM        12/12/99
- * @since 0.0.6
  * @see BitstreamException
+ * @since 0.0.6
  */
 
 public interface BitstreamErrors extends JavaLayerErrors {
@@ -35,7 +35,7 @@ public interface BitstreamErrors extends JavaLayerErrors {
     /**
      * An undeterminable error occurred.
      */
-    int UNKNOWN_ERROR = BITSTREAM_ERROR + 0;
+    int UNKNOWN_ERROR = BITSTREAM_ERROR;
 
     /**
      * The header describes an unknown sample rate.

@@ -48,8 +48,7 @@ public class jlc {
         int argc = args.length + 1;
         argv = new String[argc];
         argv[0] = "jlc";
-        for (int i = 0; i < args.length; i++)
-            argv[i + 1] = args[i];
+        System.arraycopy(args, 0, argv, 1, args.length);
 
         jlcArgs ma = new jlcArgs();
         if (!ma.processArgs(argv))

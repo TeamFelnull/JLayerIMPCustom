@@ -142,10 +142,8 @@ public final class Equalizer {
             return eq;
         if (eq > 1.0f)
             return 1.0f;
-        if (eq < -1.0f)
-            return -1.0f;
+        return Math.max(eq, -1.0f);
 
-        return eq;
     }
 
     /**

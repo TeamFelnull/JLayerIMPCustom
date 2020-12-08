@@ -97,11 +97,7 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
                 source.start();
 
             }
-        } catch (RuntimeException ex) {
-            t = ex;
-        } catch (LinkageError ex) {
-            t = ex;
-        } catch (LineUnavailableException ex) {
+        } catch (RuntimeException | LineUnavailableException | LinkageError ex) {
             t = ex;
         }
         if (source == null) throw new JavaLayerException("cannot obtain source audio line", t);
