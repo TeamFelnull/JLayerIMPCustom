@@ -22,6 +22,7 @@ package javazoom.jl.player.advanced;
 import javazoom.jl.decoder.*;
 import javazoom.jl.player.AudioDevice;
 import javazoom.jl.player.FactoryRegistry;
+import javazoom.jl.player.JavaSoundAudioDevice;
 
 import java.io.InputStream;
 
@@ -71,6 +72,7 @@ public class AdvancedPlayer {
         audio.open(decoder = new Decoder());
     }
 
+
     public void play() throws JavaLayerException {
         play(Integer.MAX_VALUE);
     }
@@ -82,9 +84,9 @@ public class AdvancedPlayer {
      * @return true if the last frame was played, or false if there are
      * more frames.
      */
+
     public boolean play(int frames) throws JavaLayerException {
         boolean ret = true;
-
         // report to listener
         if (listener != null) listener.playbackStarted(createEvent(PlaybackEvent.STARTED));
 
@@ -131,6 +133,25 @@ public class AdvancedPlayer {
             }
         }
     }
+
+    public void setVolume(float vol) {
+        if (audio instanceof JavaSoundAudioDevice) {
+            ((JavaSoundAudioDevice) audio).setVolume((float) (10f * Math.log(vol)));
+        }
+    }
+
+    public float getVolume() {
+        if (audio instanceof JavaSoundAudioDevice) {
+            //   return ((JavaSoundAudioDevice) audio).getVolume();
+            return (float) Math.pow(10, ((JavaSoundAudioDevice) audio).getVolume() / 20f);
+        }
+        return 0f;
+    }
+
+    public AudioDevice getAudio() {
+        return audio;
+    }
+
 
     /**
      * Decodes a single frame.

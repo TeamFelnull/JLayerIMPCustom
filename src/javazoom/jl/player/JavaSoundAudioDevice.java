@@ -43,6 +43,8 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
 
     private byte[] byteBuf = new byte[4096];
 
+    private float volumeGain = 0f;
+
     protected AudioFormat getAudioFormat() {
         if (fmt == null) {
             Decoder decoder = getDecoder();
@@ -54,6 +56,33 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
         }
         return fmt;
     }
+
+    //http://stackoverflow.com/a/2324408←参考→https://github.com/Vazkii/MineTunes/blob/add8e141b000c5e9f22a0da1da3d7e8ea7f380a9/src/main/java/javazoom/jl/player/JavaSoundAudioDevice.java
+    public void setVolume(float gain) {
+        if (source != null) {
+            try {
+                FloatControl volControl = (FloatControl) source.getControl(FloatControl.Type.MASTER_GAIN);
+                float newGain = Math.min(Math.max(gain, volControl.getMinimum()), volControl.getMaximum());
+                volControl.setValue(newGain);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        volumeGain = gain;
+    }
+
+    public float getVolume() {
+        if (source != null) {
+            try {
+                FloatControl volControl = (FloatControl) source.getControl(FloatControl.Type.MASTER_GAIN);
+                return volControl.getValue();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return 0f;
+    }
+
 
     protected void setAudioFormat(AudioFormat fmt0) {
         fmt = fmt0;
@@ -120,6 +149,9 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
 
         byte[] b = toByteArray(samples, offs, len);
         source.write(b, 0, len * 2);
+
+        setVolume(volumeGain);
+
     }
 
     protected byte[] getByteArray(int length) {
