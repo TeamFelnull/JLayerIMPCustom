@@ -136,7 +136,7 @@ public class AdvancedPlayer {
 
     public void setVolume(float vol) {
         if (audio instanceof JavaSoundAudioDevice) {
-            ((JavaSoundAudioDevice) audio).setVolume((float) (10f * Math.log(vol)));
+            ((JavaSoundAudioDevice) audio).setVolume((float) (20d * Math.log10(vol)));
         }
     }
 
